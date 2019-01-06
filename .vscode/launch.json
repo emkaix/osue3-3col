@@ -6,6 +6,7 @@
     "configurations": [
         {
             "name": "(gdb) Launch supervisor",
+            "preLaunchTask": "build_task",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceRoot}/src/supervisor",
@@ -25,9 +26,10 @@
         },
         {
             "name": "(gdb) Launch generator",
+            "preLaunchTask": "build_task",
             "type": "cppdbg",
             "request": "launch",
-            "program": "generator",
+            "program": "${workspaceRoot}/src/generator",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
