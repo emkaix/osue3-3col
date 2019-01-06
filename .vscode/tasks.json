@@ -5,14 +5,15 @@
             "taskName": "make all",
             "label": "build_task",
             "type": "shell",
-            "command": "make",
+            "command": "clear && make",
             "options": {
                 "cwd": "${workspaceFolder}/src"
             },
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "problemMatcher": []
         },
         {
             "taskName": "make clean",
@@ -20,7 +21,8 @@
             "command": "make clean",
             "options": {
                 "cwd": "${workspaceFolder}/src"
-            }
+            },
+            "problemMatcher": []
         }
     ]
 }

@@ -5,11 +5,13 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include",
-                "/usr/include/linux"
+                "/usr/local/include",
+                "/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include-fixed",
+                "/usr/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
-            "cStandard": "c11",
+            "cStandard": "c99",
             "cppStandard": "c++17",
             "intelliSenseMode": "gcc-x64"
         }

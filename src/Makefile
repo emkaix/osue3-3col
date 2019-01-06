@@ -7,16 +7,16 @@
 
 params = -std=c99 -pedantic -Wall -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_SVID_SOURCE -D_POSIX_C_SOURCE=200809L
 
-all: supervisor
+all: supervisor generator
 
 generator: generator.o
-	gcc $(params) -g -o generator generator.o
+	gcc $(params) -g -o generator generator.o -lrt
 
 generator.o: generator.c
 	gcc $(params) -g -o generator.o -c generator.c
 
 supervisor: supervisor.o
-	gcc $(params) -g -o supervisor supervisor.o
+	gcc $(params) -g -o supervisor supervisor.o -lrt
 
 supervisor.o: supervisor.c
 	gcc $(params) -g -o supervisor.o -c supervisor.c
