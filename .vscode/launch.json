@@ -8,7 +8,7 @@
             "name": "(gdb) Launch supervisor",
             "type": "cppdbg",
             "request": "launch",
-            "program": "supervisor",
+            "program": "${workspaceRoot}/src/supervisor",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
