@@ -14,7 +14,7 @@ unsigned int data[1000];
 
 int main(int argc, char const *argv[])
 {
-    int shmfd = shm_open("/test_shm", O_RDWR | O_CREAT, 0600);
+    int shmfd = shm_open("/test_shm", O_RDWR, 0400);
     if(shmfd == -1) {
         strerror(errno);
         perror("error shm_open");

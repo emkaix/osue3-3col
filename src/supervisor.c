@@ -6,17 +6,18 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <errno.h>
+#include "shared.h"
 
 
-typedef struct myshm {
-unsigned int state;
-unsigned int data[1000];
-} myshm_t;
+static char* pgrm_name = NULL;
 
+static void exit_error(const char*);
 
-int main(int argc, char const *argv[])
+int main(int argc, char** argv)
 {
-    int shmfd = shm_open("/test_shm", O_RDWR | O_CREAT, 0600);
+    pgrm_name = argv[0];
+
+    int shmfd = shm_open(SHM_NAME, O_RDWR | O_CREAT, PERM_OWNER_RW);
     if(shmfd == -1) {
         strerror(errno);
         perror("error shm_open");
@@ -32,10 +33,31 @@ int main(int argc, char const *argv[])
     }
 
     close(shmfd);
+
+
+    p_mshm->data[0] = 1234;
+
+
     munmap(p_mshm, sizeof(*p_mshm));
-    shm_unlink("/test_shm");
+    shm_unlink(SHM_NAME);
 
 
 
     return EXIT_SUCCESS;
+}
+
+/**
+ * Prints an error message and exits with code 1
+ * @brief This function prints the error message specified as argument, prints
+ * it to stderr with additionally information if errno is set
+ * @param[in]   s  error message to be printed
+ */
+static void exit_error(const char *s)
+{
+    if (errno == 0)
+        fprintf(stderr, "[%s]: %s\n", pgrm_name, s);
+    else
+        fprintf(stderr, "[%s]: %s, Error: %s\n", pgrm_name, s, strerror(errno));
+
+    exit(EXIT_FAILURE);
 }

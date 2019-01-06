@@ -2,25 +2,15 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "taskName": "make all",
             "label": "build_task",
             "type": "shell",
-            "command": "clear && make",
+            "command": "clear && make clean && make",
             "options": {
                 "cwd": "${workspaceFolder}/src"
             },
             "group": {
                 "kind": "build",
                 "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "taskName": "make clean",
-            "type": "shell",
-            "command": "make clean",
-            "options": {
-                "cwd": "${workspaceFolder}/src"
             },
             "problemMatcher": []
         }
