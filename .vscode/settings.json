@@ -1,6 +1,9 @@
 {
     "files.associations": {
-        "errno.h": "c"
+        "errno.h": "c",
+        "fcntl.h": "c",
+        "features.h": "c",
+        "math.h": "c"
     },
     "C_Cpp.default.intelliSenseMode": "gcc-x64",
     "C_Cpp.default.cStandard": "c99"

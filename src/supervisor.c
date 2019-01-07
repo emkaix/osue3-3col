@@ -18,22 +18,19 @@ int main(int argc, char** argv)
     pgrm_name = argv[0];
 
     int shmfd = shm_open(SHM_NAME, O_RDWR | O_CREAT, PERM_OWNER_RW);
-    if(shmfd == -1) {
-        strerror(errno);
-        perror("error shm_open");
-    }
+    if(shmfd < 0)
+        exit_error("shm_open failed");
 
-    ftruncate(shmfd, sizeof(myshm_t));
+    if(ftruncate(shmfd, sizeof(myshm_t)) < 0)
+        exit_error("ftruncated failed");
 
     myshm_t* p_mshm = mmap(NULL, sizeof(*p_mshm), PROT_READ | PROT_WRITE, MAP_SHARED, shmfd, 0);
 
-    if(p_mshm == MAP_FAILED){
-        strerror(errno);
-        perror("error map");
-    }
+    if(p_mshm == MAP_FAILED)
+        exit_error("mmap failed");
 
-    close(shmfd);
-
+    if(close(shmfd) < 0)
+        exit_error("close fd failed");
 
     p_mshm->data[0] = 1234;
 

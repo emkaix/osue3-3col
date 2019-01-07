@@ -30,7 +30,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceRoot}/src/generator",
-            "args": [],
+            "args": ["2-3", "0-1"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
