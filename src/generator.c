@@ -19,6 +19,10 @@ typedef struct graph {
     int* vertices;
 } graph_t;
 
+#define ENCODE(u, v) ((int16_t)u << 16) | v
+#define DECODE_U(val) val >> 16
+#define DECODE_V(val) val & 255
+
 static void init_graph(graph_t*, char**);
 static void print_adj_mat(graph_t*);
 
@@ -31,20 +35,39 @@ int main(int argc, char* argv[])
     print_adj_mat(&g);
 
 
-
+    //assing random color to each vertex
     srand((unsigned int)time(NULL));
     for(size_t i = 0; i < g.num_vertices; i++)
     {
         g.vertices[i] = rand() % 3;
     }
     
+
+
+
+    res_set_t rs;
+    memset(&rs, 0, sizeof(rs));
+
     
     for(size_t i = 0; i < g.num_edges; i++)
     {        
         for(size_t j = 0; j < g.num_edges; j++)
         {
             if (g.adj_mat[i][j] == 0) continue;
-            // if (g.vertices[i] == g.vertices[j]);
+
+            //edge exists between vertex i and j
+            if (g.vertices[i] == g.vertices[j]) {
+                //remove
+                g.adj_mat[i][j] = 0;
+                //store the result set
+                // rs.edges[rs.num_edges++] = (g.vertices[i] << 32) | g.vertices[j];
+                rs.edges[rs.num_edges++] = ENCODE(3, 4);
+
+                int t1 = DECODE_U(rs.edges[0]);
+                int t2 = DECODE_V(rs.edges[0]);
+                
+                int a = 3;
+            }
         } 
         
     }
