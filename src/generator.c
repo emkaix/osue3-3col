@@ -18,22 +18,15 @@ typedef struct graph {
 } graph_t;
 
 static void init_graph(graph_t*, char**);
+static void print_adj_mat(graph_t*);
 
 int main(int argc, char* argv[])
 {
-    int edges_cnt = argc - 1;
-    char* edges[edges_cnt];
-    memset(edges, 0, sizeof(char*) * edges_cnt);
-    
-    for(size_t i = 0; i < edges_cnt; i++)
-    {
-        edges[i] = argv[i + 1];
-    }
-    
     graph_t g;
     memset(&g, 0, sizeof(g));
 
     init_graph(&g, argv + 1);
+    print_adj_mat(&g);
 
     int t = 2;
 
@@ -66,30 +59,56 @@ static void init_graph(graph_t* g, char** pedges) {
     long int max_idx = 0;
     int num_edges = 0;
 
-    while(*pedges != NULL) {
+    char** buffer = pedges;
+    // get highest vertex index
+    while(*buffer != NULL) {
         char* end;
-        long int u = strtol(*pedges, &end, 10);
+        long int u = strtol(*buffer, &end, 10);
         long int v = strtol(++end, NULL, 10);
 
         if(u > max_idx || v > max_idx)
             max_idx = u > v ? u : v;
 
         num_edges++;
-        pedges++;
+        buffer++;
     }
-
+    
     g->num_edges = num_edges;
 
     //init vertices array
-    g->num_vertices = max_idx + 1;
-    g->vertices = malloc(g->num_vertices);
+    int num_vertices = max_idx + 1;
+    g->num_vertices = num_vertices;
+
+    g->vertices = malloc(num_vertices);
 
     //init 2D adjacency matrix
-    g->adj_mat = malloc(max_idx * sizeof(int *));
-	g->adj_mat[0] = malloc(max_idx * max_idx * sizeof(int));
-	for(int i = 1; i < max_idx; i++)
-		g->adj_mat[i] = g->adj_mat[0] + i * max_idx;
+    g->adj_mat = malloc(num_vertices * sizeof(int *));
+	g->adj_mat[0] = malloc(num_vertices * num_vertices * sizeof(int));
+	for(int i = 1; i < num_vertices; i++)
+		g->adj_mat[i] = g->adj_mat[0] + i * num_vertices;
 
+    //fill adjacency matrix
+    while(*pedges != NULL) {
+        char* end;
+        long int u = strtol(*pedges, &end, 10);
+        long int v = strtol(++end, NULL, 10);
+
+        g->adj_mat[u][v] = 1;
+        pedges++;
+    }
+
+}
+
+static void print_adj_mat(graph_t* g) {    
+    for(size_t i = 0; i < g->num_vertices; i++)
+    {   
+        for(size_t j = 0; j < g->num_vertices; j++)
+        {
+            printf("[%d] ", g->adj_mat[i][j]);
+        }
+        printf("\n");
+    }
+    
 }
 
 
