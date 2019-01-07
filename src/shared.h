@@ -12,4 +12,10 @@ unsigned int state;
 unsigned int data[1000];
 } myshm_t;
 
+typedef struct res_set {
+    int num_edges;
+    int32_t edges[8];
+} res_set_t;
+
+
 #endif // SHARED_H
