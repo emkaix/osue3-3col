@@ -7,6 +7,8 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <math.h>
+#include <time.h>
+
 
 #include "shared.h"
 
@@ -28,7 +30,27 @@ int main(int argc, char* argv[])
     init_graph(&g, argv + 1);
     print_adj_mat(&g);
 
-    int t = 2;
+
+
+    srand((unsigned int)time(NULL));
+    for(size_t i = 0; i < g.num_vertices; i++)
+    {
+        g.vertices[i] = rand() % 3;
+    }
+    
+    
+    for(size_t i = 0; i < g.num_edges; i++)
+    {        
+        for(size_t j = 0; j < g.num_edges; j++)
+        {
+            if (g.adj_mat[i][j] == 0) continue;
+            // if (g.vertices[i] == g.vertices[j]);
+        } 
+        
+    }
+    
+
+    // int testrtttt = 2;
 
     // int shmfd = shm_open("/test_shm", O_RDWR, 0400);
     // if(shmfd == -1) {
@@ -80,10 +102,15 @@ static void init_graph(graph_t* g, char** pedges) {
     g->num_vertices = num_vertices;
 
     g->vertices = malloc(num_vertices);
+    memset(g->vertices, 0, num_vertices);
 
     //init 2D adjacency matrix
     g->adj_mat = malloc(num_vertices * sizeof(int *));
 	g->adj_mat[0] = malloc(num_vertices * num_vertices * sizeof(int));
+
+    //zero allocation
+    memset(g->adj_mat[0], 0, num_vertices * num_vertices * sizeof(int));
+
 	for(int i = 1; i < num_vertices; i++)
 		g->adj_mat[i] = g->adj_mat[0] + i * num_vertices;
 
