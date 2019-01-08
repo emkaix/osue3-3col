@@ -36,8 +36,14 @@ int main(int argc, char* argv[])
     print_adj_mat(&g);
 
 
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
 
-    srand((unsigned int)time(NULL));
+    /* using nano-seconds instead of seconds */
+    srand((time_t)ts.tv_nsec);
+
+    // srand((unsigned int)time(NULL));
+    
 
 
     res_set_t rs;
@@ -53,9 +59,11 @@ int main(int argc, char* argv[])
             g.vertices[i] = rand() % 3;
         
         //restore original adj matrix for new run
-        int adj_mat_buffer[g.num_vertices][g.num_vertices];
-        // memset(adj_mat_buffer, 0, g.num_vertices * g.num_vertices * sizeof(int));
-        memcpy(adj_mat_buffer, *g.adj_mat, g.num_vertices * g.num_vertices * sizeof(int));
+        // int adj_mat_buffer[g.num_vertices][g.num_vertices];
+        int** adj_mat_buffer;
+        init_2D_mat(&adj_mat_buffer, g.num_vertices);
+        
+        memcpy(*adj_mat_buffer, *g.adj_mat, g.num_vertices * g.num_vertices * sizeof(int));
 
         for(size_t i = 0; i < g.num_vertices; i++)
         {        
@@ -71,9 +79,6 @@ int main(int argc, char* argv[])
 
                     if(rs.num_edges < MAX_RESULT_EDGES)
                     rs.edges[rs.num_edges++] = ENCODE(i, j);
-
-                    // int t1 = DECODE_U(rs.edges[0]);
-                    // int t2 = DECODE_V(rs.edges[0]);
                 }
             } 
             
@@ -158,7 +163,7 @@ static void init_graph(graph_t* g, char** pedges) {
 
     //init 2D adjacency matrix
     init_2D_mat(&g->adj_mat, num_vertices);
-    
+
     //fill adjacency matrix
     while(*pedges != NULL) {
         char* end;
