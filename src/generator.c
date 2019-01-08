@@ -19,9 +19,9 @@ typedef struct graph {
     int* vertices;
 } graph_t;
 
-#define ENCODE(u, v) ((int16_t)u << 16) | v
-#define DECODE_U(val) val >> 16
-#define DECODE_V(val) val & 255
+#define ENCODE(u, v) (((int16_t)u << 16) | v)
+#define DECODE_U(val) (val >> 16)
+#define DECODE_V(val) (val & 255)
 
 static void init_graph(graph_t*, char**);
 static void print_adj_mat(graph_t*);
@@ -35,42 +35,63 @@ int main(int argc, char* argv[])
     print_adj_mat(&g);
 
 
-    //assing random color to each vertex
-    srand((unsigned int)time(NULL));
-    for(size_t i = 0; i < g.num_vertices; i++)
-    {
-        g.vertices[i] = rand() % 3;
-    }
-    
 
+    
 
 
     res_set_t rs;
     memset(&rs, 0, sizeof(rs));
 
-    
-    for(size_t i = 0; i < g.num_edges; i++)
-    {        
-        for(size_t j = 0; j < g.num_edges; j++)
-        {
-            if (g.adj_mat[i][j] == 0) continue;
-
-            //edge exists between vertex i and j
-            if (g.vertices[i] == g.vertices[j]) {
-                //remove
-                g.adj_mat[i][j] = 0;
-                //store the result set
-                // rs.edges[rs.num_edges++] = (g.vertices[i] << 32) | g.vertices[j];
-                rs.edges[rs.num_edges++] = ENCODE(3, 4);
-
-                int t1 = DECODE_U(rs.edges[0]);
-                int t2 = DECODE_V(rs.edges[0]);
-                
-                int a = 3;
-            }
-        } 
+    size_t count = 50;
+    while(count-- > 0) {
+        //assing random color to each vertex
+        srand((unsigned int)time(NULL));
+        sleep(1);
+        for(size_t i = 0; i < g.num_vertices; i++)
+            g.vertices[i] = rand() % 3;
         
+        //restore original adj matrix for new run
+        int adj_mat_buffer[g.num_vertices][g.num_vertices];
+        // memset(adj_mat_buffer, 0, g.num_vertices * g.num_vertices * sizeof(int));
+        memcpy(adj_mat_buffer, *g.adj_mat, g.num_vertices * g.num_vertices * sizeof(int));
+
+        for(size_t i = 0; i < g.num_vertices; i++)
+        {        
+            for(size_t j = 0; j < g.num_vertices; j++)
+            {
+                if (adj_mat_buffer[i][j] == 0) continue;
+
+                //edge exists between vertex i and j
+                if (g.vertices[i] == g.vertices[j]) {
+                    //remove
+                    adj_mat_buffer[i][j] = 0;
+                    //store the result set
+
+                    if(rs.num_edges < MAX_RESULT_EDGES)
+                    rs.edges[rs.num_edges++] = ENCODE(i, j);
+
+                    // int t1 = DECODE_U(rs.edges[0]);
+                    // int t2 = DECODE_V(rs.edges[0]);
+                }
+            } 
+            
+        }
+        
+
+        for(size_t i = 0; i < MAX_RESULT_EDGES; i++)
+        {
+            if(rs.edges[i] == 0) break;
+            printf("%d-%d\n", DECODE_U(rs.edges[i]), DECODE_V(rs.edges[i]));
+        }
+
+        printf("---------\n");
+
+        //write to shared mem
+        //clean local buffer;
+        memset(&rs.edges, 0, sizeof(rs.edges));
+        rs.num_edges = 0;
     }
+
     
 
     // int testrtttt = 2;
@@ -95,7 +116,8 @@ int main(int argc, char* argv[])
     // shm_unlink("/test_shm");
 
 
-
+    free(g.vertices);
+    free(g.adj_mat);
     return EXIT_SUCCESS;
 }
 
