@@ -24,6 +24,7 @@ typedef struct graph {
 #define DECODE_V(val) (val & 255)
 
 static void init_graph(graph_t*, char**);
+static void init_2D_mat(int***, int);
 static void print_adj_mat(graph_t*);
 
 int main(int argc, char* argv[])
@@ -156,15 +157,8 @@ static void init_graph(graph_t* g, char** pedges) {
     memset(g->vertices, 0, num_vertices);
 
     //init 2D adjacency matrix
-    g->adj_mat = malloc(num_vertices * sizeof(int *));
-	g->adj_mat[0] = malloc(num_vertices * num_vertices * sizeof(int));
-
-    //zero allocation
-    memset(g->adj_mat[0], 0, num_vertices * num_vertices * sizeof(int));
-
-	for(int i = 1; i < num_vertices; i++)
-		g->adj_mat[i] = g->adj_mat[0] + i * num_vertices;
-
+    init_2D_mat(&g->adj_mat, num_vertices);
+    
     //fill adjacency matrix
     while(*pedges != NULL) {
         char* end;
@@ -187,6 +181,17 @@ static void print_adj_mat(graph_t* g) {
         printf("\n");
     }
     
+}
+
+static void init_2D_mat(int*** pmat, int numrows) {
+    *pmat = malloc(numrows * sizeof(int *));
+	(*pmat)[0] = malloc(numrows * numrows * sizeof(int));
+
+    //zero allocation
+    memset((*pmat)[0], 0, numrows * numrows * sizeof(int));
+
+	for(int i = 1; i < numrows; i++)
+		(*pmat)[i] = (*pmat)[0] + i * numrows;
 }
 
 
