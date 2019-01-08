@@ -36,17 +36,18 @@ int main(int argc, char* argv[])
 
 
 
-    
+    srand((unsigned int)time(NULL));
 
 
     res_set_t rs;
     memset(&rs, 0, sizeof(rs));
 
     size_t count = 50;
+
+    //main loop generator
     while(count-- > 0) {
-        //assing random color to each vertex
-        srand((unsigned int)time(NULL));
-        sleep(1);
+        //assign random color to each vertex
+        
         for(size_t i = 0; i < g.num_vertices; i++)
             g.vertices[i] = rand() % 3;
         
@@ -76,7 +77,12 @@ int main(int argc, char* argv[])
             } 
             
         }
-        
+
+        //graph is acyclic, no edges need to be removed
+        if(rs.num_edges == 0) {
+            printf("graph is acyclic\n");
+            break;
+        }
 
         for(size_t i = 0; i < MAX_RESULT_EDGES; i++)
         {
