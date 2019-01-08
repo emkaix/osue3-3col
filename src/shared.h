@@ -8,16 +8,16 @@
 #define MAX_EDGE_COUNT 64
 #define MAX_RESULT_EDGES 8
 
-
-typedef struct myshm {
-unsigned int state;
-unsigned int data[1000];
-} myshm_t;
-
 typedef struct res_set {
     int num_edges;
     int32_t edges[MAX_RESULT_EDGES];
 } res_set_t;
+
+typedef struct myshm {
+    unsigned int state;
+    res_set_t data[1000];
+} myshm_t;
+
 
 
 #endif // SHARED_H

@@ -26,6 +26,7 @@ typedef struct graph {
 static void init_graph(graph_t*, char**);
 static void init_2D_mat(int***, int);
 static void print_adj_mat(graph_t*);
+static void set_random_seed(void);
 
 int main(int argc, char* argv[])
 {
@@ -35,15 +36,7 @@ int main(int argc, char* argv[])
     init_graph(&g, argv + 1);
     print_adj_mat(&g);
 
-
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-
-    /* using nano-seconds instead of seconds */
-    srand((time_t)ts.tv_nsec);
-
-    // srand((unsigned int)time(NULL));
-    
+    set_random_seed();    
 
 
     res_set_t rs;
@@ -199,7 +192,13 @@ static void init_2D_mat(int*** pmat, int numrows) {
 		(*pmat)[i] = (*pmat)[0] + i * numrows;
 }
 
+static void set_random_seed(void) {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
 
+    /* using nano-seconds instead of seconds */
+    srand((time_t)ts.tv_nsec);
+}
 
 
 
