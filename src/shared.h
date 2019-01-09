@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <errno.h>
+#include <semaphore.h>
 
 #define SHM_NAME "/11775823_shm"
 #define PERM_OWNER_RW (0600)

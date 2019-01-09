@@ -7,9 +7,11 @@ typedef struct sigaction sigaction_t;           /*!< used for registering a sign
 
 static void handlesignal(int);
 static void exit_error(const char*);
+static void create_shared_mem(shm_t** const);
 
 static volatile bool should_terminate = false;  /*!< when set via signal callback, the server closes gracefully */
 static const char* pgrm_name = NULL;
+
 
 int main(int argc, const char** argv)
 {
@@ -24,27 +26,15 @@ int main(int argc, const char** argv)
     if(sigaction(SIGTERM, &sa, NULL) < 0)
         exit_error("sigaction failed");
 
-    int shmfd;
-    if((shmfd = shm_open(SHM_NAME, O_RDWR | O_CREAT | O_EXCL, PERM_OWNER_RW)) < 0)
-        exit_error("shm_open failed");
-
-    if(ftruncate(shmfd, sizeof(shm_t)) < 0)
-        exit_error("ftruncated failed");
-
-    shm_t* p_mshm = mmap(NULL, sizeof(*p_mshm), PROT_READ | PROT_WRITE, MAP_SHARED, shmfd, 0);
-
-    if(p_mshm == MAP_FAILED)
-        exit_error("mmap failed");
-
-    if(close(shmfd) < 0)
-        exit_error("close fd failed");
+    shm_t* shm;
+    create_shared_mem(&shm);
 
     //main loop
     while(!should_terminate) {
         int dummy = 3;
     }
 
-    if(munmap(p_mshm, sizeof(*p_mshm)) < 0)
+    if(munmap(shm, sizeof(shm_t)) < 0)
         exit_error("munmap failed");
         
     if(shm_unlink(SHM_NAME) < 0)
@@ -75,4 +65,19 @@ static void handlesignal(int signal) {
     should_terminate = true;
 }
 
+static void create_shared_mem(shm_t** const pshm) {
+    int shmfd;
+    if ((shmfd = shm_open(SHM_NAME, O_RDWR | O_CREAT | O_EXCL, PERM_OWNER_RW)) < 0)
+        exit_error("shm_open failed");
 
+    if (ftruncate(shmfd, sizeof(shm_t)) < 0)
+        exit_error("ftruncated failed");
+    
+    *pshm = mmap(NULL, sizeof(shm_t), PROT_READ | PROT_WRITE, MAP_SHARED, shmfd, 0);
+
+    if (*pshm == MAP_FAILED)
+        exit_error("mmap failed");
+
+    if (close(shmfd) < 0)
+        exit_error("close fd failed");
+}
