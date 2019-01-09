@@ -1,27 +1,17 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/mman.h>
-#include <fcntl.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <errno.h>
 #include <signal.h>
 #include <stdbool.h>
 #include "shared.h"
 
-
-static char* pgrm_name = NULL;
-
-static void exit_error(const char*);
-
 typedef struct addrinfo addrinfo_t;             /*!< typedef for the standard addrinfo struct */
 typedef struct sigaction sigaction_t;           /*!< used for registering a signal callback function */
+
 static void handlesignal(int);
+static void exit_error(const char*);
+
 static volatile bool should_terminate = false;  /*!< when set via signal callback, the server closes gracefully */
+static const char* pgrm_name = NULL;
 
-
-int main(int argc, char** argv)
+int main(int argc, const char** argv)
 {
     pgrm_name = argv[0];
 
@@ -29,17 +19,19 @@ int main(int argc, char** argv)
     sigaction_t sa;
     memset(&sa, 0, sizeof(sigaction_t));
     sa.sa_handler = handlesignal;
-    sigaction(SIGINT, &sa, NULL);
-    sigaction(SIGTERM, &sa, NULL);
+    if(sigaction(SIGINT, &sa, NULL) < 0)
+        exit_error("sigaction failed");
+    if(sigaction(SIGTERM, &sa, NULL) < 0)
+        exit_error("sigaction failed");
 
-    int shmfd = shm_open(SHM_NAME, O_RDWR | O_CREAT, PERM_OWNER_RW);
-    if(shmfd < 0)
+    int shmfd;
+    if((shmfd = shm_open(SHM_NAME, O_RDWR | O_CREAT | O_EXCL, PERM_OWNER_RW)) < 0)
         exit_error("shm_open failed");
 
-    if(ftruncate(shmfd, sizeof(myshm_t)) < 0)
+    if(ftruncate(shmfd, sizeof(shm_t)) < 0)
         exit_error("ftruncated failed");
 
-    myshm_t* p_mshm = mmap(NULL, sizeof(*p_mshm), PROT_READ | PROT_WRITE, MAP_SHARED, shmfd, 0);
+    shm_t* p_mshm = mmap(NULL, sizeof(*p_mshm), PROT_READ | PROT_WRITE, MAP_SHARED, shmfd, 0);
 
     if(p_mshm == MAP_FAILED)
         exit_error("mmap failed");
@@ -47,14 +39,16 @@ int main(int argc, char** argv)
     if(close(shmfd) < 0)
         exit_error("close fd failed");
 
-
     //main loop
     while(!should_terminate) {
         int dummy = 3;
     }
 
-    munmap(p_mshm, sizeof(*p_mshm));
-    shm_unlink(SHM_NAME);
+    if(munmap(p_mshm, sizeof(*p_mshm)) < 0)
+        exit_error("munmap failed");
+        
+    if(shm_unlink(SHM_NAME) < 0)
+        exit_error("shm_unlink failed");
 
 
     printf("exit gracefully\n");

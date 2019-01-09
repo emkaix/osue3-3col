@@ -2,21 +2,35 @@
 #ifndef SHARED_H
 #define SHARED_H
 
-#define SHM_NAME "/11775823_shm"
-#define PERM_OWNER_RW 0600
-#define PERM_OWNER_R 0400
-#define MAX_EDGE_COUNT 64
-#define MAX_RESULT_EDGES 8
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <errno.h>
 
-typedef struct res_set {
+#define SHM_NAME "/11775823_shm"
+#define PERM_OWNER_RW (0600)
+#define PERM_OWNER_R (0400)
+#define MAX_EDGE_COUNT (64)
+#define MAX_RESULT_EDGES (8)
+#define CIRCULAR_BUFFER_SIZE (1000)
+
+#define DECODE_U(val) (val >> 16)
+#define DECODE_V(val) (val & 255)
+#define ENCODE(u, v) (((int16_t)u << 16) | v)
+
+typedef struct rset {
     int num_edges;
     int32_t edges[MAX_RESULT_EDGES];
-} res_set_t;
+} rset_t;
 
-typedef struct myshm {
+typedef struct shm {
     unsigned int state;
-    res_set_t data[1000];
-} myshm_t;
+    rset_t data[CIRCULAR_BUFFER_SIZE];
+} shm_t;
 
 
 
