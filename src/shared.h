@@ -13,11 +13,14 @@
 #include <semaphore.h>
 
 #define SHM_NAME "/11775823_shm"
+#define SEM_FREE "/11775823_sem_free"
+#define SEM_USED "/11775823_sem_used"
+
 #define PERM_OWNER_RW (0600)
 #define PERM_OWNER_R (0400)
 #define MAX_EDGE_COUNT (64)
 #define MAX_RESULT_EDGES (8)
-#define CIRCULAR_BUFFER_SIZE (1000)
+#define CIRCULAR_BUFFER_SIZE (100)
 
 #define DECODE_U(val) (val >> 16)
 #define DECODE_V(val) (val & 255)

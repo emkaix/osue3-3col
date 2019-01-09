@@ -2,12 +2,13 @@
 #include <stdbool.h>
 #include "shared.h"
 
-typedef struct addrinfo addrinfo_t;             /*!< typedef for the standard addrinfo struct */
 typedef struct sigaction sigaction_t;           /*!< used for registering a signal callback function */
 
-static void handlesignal(int);
+static void handle_signal(int);
 static void exit_error(const char*);
 static void create_shared_mem(shm_t** const);
+static void create_semaphores(sem_t** const, sem_t** const);
+static void init_signal_handling(sigaction_t* const);
 
 static volatile bool should_terminate = false;  /*!< when set via signal callback, the server closes gracefully */
 static const char* pgrm_name = NULL;
@@ -19,15 +20,16 @@ int main(int argc, const char** argv)
 
     //signal handler is executed whenever SIGINT or SIGTERM occurs
     sigaction_t sa;
-    memset(&sa, 0, sizeof(sigaction_t));
-    sa.sa_handler = handlesignal;
-    if(sigaction(SIGINT, &sa, NULL) < 0)
-        exit_error("sigaction failed");
-    if(sigaction(SIGTERM, &sa, NULL) < 0)
-        exit_error("sigaction failed");
+    init_signal_handling(&sa);
 
+    //init shared memory
     shm_t* shm;
     create_shared_mem(&shm);
+
+    //init semaphore
+    sem_t *sem_free;
+    sem_t *sem_used;
+    create_semaphores(&sem_free, &sem_used);
 
     //main loop
     while(!should_terminate) {
@@ -61,7 +63,7 @@ static void exit_error(const char *s)
     exit(EXIT_FAILURE);
 }
 
-static void handlesignal(int signal) {
+static void handle_signal(int signal) {
     should_terminate = true;
 }
 
@@ -80,4 +82,21 @@ static void create_shared_mem(shm_t** const pshm) {
 
     if (close(shmfd) < 0)
         exit_error("close fd failed");
+}
+
+static void create_semaphores(sem_t** const sem_free, sem_t** const sem_used) {
+    if ((*sem_free = sem_open(SEM_FREE, O_CREAT | O_EXCL, PERM_OWNER_RW, CIRCULAR_BUFFER_SIZE)) == SEM_FAILED)
+        exit_error("sem_open failed");
+
+    if ((*sem_used = sem_open(SEM_USED, O_CREAT | O_EXCL, PERM_OWNER_RW, 0)) == SEM_FAILED)
+        exit_error("sem_open failed");
+}
+
+static void init_signal_handling(sigaction_t* const sa) {
+    memset(sa, 0, sizeof(sigaction_t));
+    sa->sa_handler = handle_signal;
+    if(sigaction(SIGINT, sa, NULL) < 0)
+        exit_error("sigaction failed");
+    if(sigaction(SIGTERM, sa, NULL) < 0)
+        exit_error("sigaction failed");
 }
