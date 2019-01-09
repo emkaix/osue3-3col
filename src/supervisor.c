@@ -15,32 +15,32 @@ static void exit_error(const char*);
 
 int main(int argc, char** argv)
 {
-    pgrm_name = argv[0];
+    // pgrm_name = argv[0];
 
-    int shmfd = shm_open(SHM_NAME, O_RDWR | O_CREAT, PERM_OWNER_RW);
-    if(shmfd < 0)
-        exit_error("shm_open failed");
+    // int shmfd = shm_open(SHM_NAME, O_RDWR | O_CREAT, PERM_OWNER_RW);
+    // if(shmfd < 0)
+    //     exit_error("shm_open failed");
 
-    if(ftruncate(shmfd, sizeof(myshm_t)) < 0)
-        exit_error("ftruncated failed");
+    // if(ftruncate(shmfd, sizeof(myshm_t)) < 0)
+    //     exit_error("ftruncated failed");
 
-    myshm_t* p_mshm = mmap(NULL, sizeof(*p_mshm), PROT_READ | PROT_WRITE, MAP_SHARED, shmfd, 0);
+    // myshm_t* p_mshm = mmap(NULL, sizeof(*p_mshm), PROT_READ | PROT_WRITE, MAP_SHARED, shmfd, 0);
 
-    if(p_mshm == MAP_FAILED)
-        exit_error("mmap failed");
+    // if(p_mshm == MAP_FAILED)
+    //     exit_error("mmap failed");
 
-    if(close(shmfd) < 0)
-        exit_error("close fd failed");
+    // if(close(shmfd) < 0)
+    //     exit_error("close fd failed");
 
-    p_mshm->data[0] = 1234;
-
-
-    munmap(p_mshm, sizeof(*p_mshm));
-    shm_unlink(SHM_NAME);
+    // p_mshm->data[0] = 1234;
 
 
+    // munmap(p_mshm, sizeof(*p_mshm));
+    // shm_unlink(SHM_NAME);
 
-    return EXIT_SUCCESS;
+
+
+    // return EXIT_SUCCESS;
 }
 
 /**
