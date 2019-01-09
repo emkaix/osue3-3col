@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/src/**",
                 "/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include",
-                "/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include-fixed"
+                "/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include-fixed",
+                "/usr/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

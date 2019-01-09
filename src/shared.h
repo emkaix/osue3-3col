@@ -13,8 +13,8 @@
 #include <semaphore.h>
 
 #define SHM_NAME "/11775823_shm"
-#define SEM_FREE "/11775823_sem_free"
-#define SEM_USED "/11775823_sem_used"
+#define SEM_FREE_NAME "/11775823_sem_free"
+#define SEM_USED_NAME "/11775823_sem_used"
 
 #define PERM_OWNER_RW (0600)
 #define PERM_OWNER_R (0400)

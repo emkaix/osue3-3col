@@ -1,5 +1,6 @@
 #include <signal.h>
 #include <stdbool.h>
+#include <limits.h>
 #include "shared.h"
 
 typedef struct sigaction sigaction_t;           /*!< used for registering a signal callback function */
@@ -32,9 +33,47 @@ int main(int argc, const char** argv)
     create_semaphores(&sem_free, &sem_used);
 
     //main loop
+    int read_pos = 0;
+    rset_t best_rset;
+    best_rset.num_edges = INT_MAX;
+
     while(!should_terminate) {
-        int dummy = 3;
+        if (sem_wait(sem_used) < 0) {
+            if (errno == EINTR) {
+                printf("intr in wait\n");
+                continue;
+            }
+            exit_error("sem_wait failed");
+        }
+
+        rset_t cur_rset = shm->data[read_pos];
+
+        //graph is acyclic, no edges need to be removed
+        if(cur_rset.num_edges == 0) {
+            printf("The graph is 3-colorable!\n");
+            shm->state = 1;
+            break;
+        }
+
+        //print better solutions
+        if (cur_rset.num_edges < best_rset.num_edges) {
+            best_rset = cur_rset;
+            printf("Solution with %d edges: ", best_rset.num_edges);            
+            
+            for(size_t i = 0; i < best_rset.num_edges; i++)
+            {
+                int u = DECODE_U(best_rset.edges[i]);
+                int v = DECODE_V(best_rset.edges[i]);
+                printf("%d-%d ", u, v);
+            }
+            printf("\n");
+        }
+        
+        sem_post(sem_free);
+        read_pos = (read_pos + 1) % CIRCULAR_BUFFER_SIZE;
     }
+
+    shm->state = 1;
 
     if(munmap(shm, sizeof(shm_t)) < 0)
         exit_error("munmap failed");
@@ -42,6 +81,17 @@ int main(int argc, const char** argv)
     if(shm_unlink(SHM_NAME) < 0)
         exit_error("shm_unlink failed");
 
+    if (sem_close(sem_free) < 0)
+        exit_error("sem_close failed");
+
+    if (sem_close(sem_used) < 0)
+        exit_error("sem_close failed");
+
+    if (sem_unlink(SEM_FREE_NAME) < 0)
+        exit_error("sem_unlink failed");
+
+    if (sem_unlink(SEM_USED_NAME) < 0)
+        exit_error("sem_unlink failed");
 
     printf("exit gracefully\n");
     return EXIT_SUCCESS;
@@ -85,10 +135,10 @@ static void create_shared_mem(shm_t** const pshm) {
 }
 
 static void create_semaphores(sem_t** const sem_free, sem_t** const sem_used) {
-    if ((*sem_free = sem_open(SEM_FREE, O_CREAT | O_EXCL, PERM_OWNER_RW, CIRCULAR_BUFFER_SIZE)) == SEM_FAILED)
+    if ((*sem_free = sem_open(SEM_FREE_NAME, O_CREAT | O_EXCL, PERM_OWNER_RW, CIRCULAR_BUFFER_SIZE)) == SEM_FAILED)
         exit_error("sem_open failed");
 
-    if ((*sem_used = sem_open(SEM_USED, O_CREAT | O_EXCL, PERM_OWNER_RW, 0)) == SEM_FAILED)
+    if ((*sem_used = sem_open(SEM_USED_NAME, O_CREAT | O_EXCL, PERM_OWNER_RW, 0)) == SEM_FAILED)
         exit_error("sem_open failed");
 }
 

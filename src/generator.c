@@ -15,6 +15,7 @@ static void print_adj_mat(graph_t* const);
 static void set_random_seed(void);
 static void exit_error(const char*);
 static void map_shared_mem(shm_t** const);
+static void open_semaphores(sem_t** const, sem_t** const);
 
 static const char* pgrm_name = NULL;
 
@@ -22,18 +23,22 @@ int main(int argc, const char** argv)
 {
     //init 
     pgrm_name = argv[0];
+    int write_pos = 0;
     set_random_seed();
 
     graph_t g;
     rset_t rs;
     shm_t* shm;
+    sem_t* sem_free;
+    sem_t* sem_used;
 
     memset(&g, 0, sizeof(g));
     memset(&rs, 0, sizeof(rs));
 
     init_graph(&g, argv + 1);
     print_adj_mat(&g);
-    map_shared_mem(&shm);    
+    map_shared_mem(&shm);
+    open_semaphores(&sem_free, &sem_used);
 
     //main loop
     char** adj_mat_buffer = NULL;
@@ -69,13 +74,6 @@ int main(int argc, const char** argv)
             }            
         }
 
-        //graph is acyclic, no edges need to be removed
-        if(rs.num_edges == 0) {
-            printf("graph is acyclic, finished\n");
-            shm->state = 1;
-            break;
-        }
-
         //debug output
         for(size_t i = 0; i < MAX_RESULT_EDGES; i++)
         {
@@ -85,11 +83,23 @@ int main(int argc, const char** argv)
         printf("---------\n");
 
         //write to shared mem
-        memcpy(&(shm->data[0]), &rs, sizeof(rset_t));
+        sem_wait(sem_free);
+        if (shm->state == 0)
+            shm->data[write_pos] = rs;
+        else break;
+
+        sem_post(sem_used);
+        write_pos = (write_pos + 1) % CIRCULAR_BUFFER_SIZE;
     }
 
-    if(munmap(shm, sizeof(*shm)) < 0)
+    if(munmap(shm, sizeof(shm_t)) < 0)
         exit_error("munmap failed");
+
+    if (sem_close(sem_free) < 0)
+        exit_error("sem_close failed");
+
+    if (sem_close(sem_used) < 0)
+        exit_error("sem_close failed");
 
 
     free(g.vertices);
@@ -214,3 +224,10 @@ static void map_shared_mem(shm_t** const pshm) {
         exit_error("closing shmfd failed");
 }
 
+static void open_semaphores(sem_t** const sem_free, sem_t** const sem_used) {
+    if ((*sem_free = sem_open(SEM_FREE_NAME, 0)) == SEM_FAILED)
+        exit_error("sem_open failed");
+
+    if ((*sem_used = sem_open(SEM_USED_NAME, 0)) == SEM_FAILED)
+        exit_error("sem_open failed");
+}
