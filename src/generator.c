@@ -2,6 +2,8 @@
 #include <time.h>
 #include "shared.h"
 
+#define SEM_WMUTEX_NAME "/11775823_sem_wmutex"
+
 typedef struct graph {
     int num_edges;
     int num_vertices;
@@ -31,6 +33,7 @@ int main(int argc, const char** argv)
     shm_t* shm;
     sem_t* sem_free;
     sem_t* sem_used;
+    sem_t* sem_wmutex;
 
     memset(&g, 0, sizeof(g));
     memset(&rs, 0, sizeof(rs));
@@ -39,6 +42,9 @@ int main(int argc, const char** argv)
     print_adj_mat(&g);
     map_shared_mem(&shm);
     open_semaphores(&sem_free, &sem_used);
+
+    if ((sem_wmutex = sem_open(SEM_WMUTEX_NAME, O_CREAT, PERM_OWNER_RW, 1)) == SEM_FAILED)
+        exit_error("sem_open failed");
 
     //main loop
     char** adj_mat_buffer = NULL;
@@ -75,14 +81,15 @@ int main(int argc, const char** argv)
         }
 
         //debug output
-        for(size_t i = 0; i < MAX_RESULT_EDGES; i++)
-        {
-            if(rs.edges[i] == 0) break;
-            printf("%d-%d\n", DECODE_U(rs.edges[i]), DECODE_V(rs.edges[i]));
-        }
-        printf("---------\n");
+        // for(size_t i = 0; i < MAX_RESULT_EDGES; i++)
+        // {
+        //     if(rs.edges[i] == 0) break;
+        //     printf("%d-%d\n", DECODE_U(rs.edges[i]), DECODE_V(rs.edges[i]));
+        // }
+        // printf("---------\n");
 
         //write to shared mem
+        sem_wait(sem_wmutex);
         sem_wait(sem_free);
         if (shm->state == 0)
             shm->data[write_pos] = rs;
@@ -90,6 +97,7 @@ int main(int argc, const char** argv)
 
         sem_post(sem_used);
         write_pos = (write_pos + 1) % CIRCULAR_BUFFER_SIZE;
+        sem_post(sem_wmutex);
     }
 
     if(munmap(shm, sizeof(shm_t)) < 0)
@@ -101,10 +109,19 @@ int main(int argc, const char** argv)
     if (sem_close(sem_used) < 0)
         exit_error("sem_close failed");
 
+    if (sem_close(sem_wmutex) < 0)
+        exit_error("sem_close failed");
+
+    if (sem_unlink(SEM_WMUTEX_NAME) < 0)
+        exit_error("sem_unlink failed");
+
 
     free(g.vertices);
     free(g.adj_mat);
     free(g.adj_mat[0]);
+
+
+
     return EXIT_SUCCESS;
 }
 
