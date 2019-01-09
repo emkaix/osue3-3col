@@ -15,7 +15,7 @@
 typedef struct graph {
     int num_edges;
     int num_vertices;
-    int** adj_mat;
+    char** adj_mat;
     int* vertices;
 } graph_t;
 
@@ -24,17 +24,21 @@ typedef struct graph {
 #define DECODE_V(val) (val & 255)
 
 static void init_graph(graph_t*, char**);
-static void init_2D_mat(int***, int);
+static void init_2D_mat(char***, int);
 static void print_adj_mat(graph_t*);
 static void set_random_seed(void);
+static void exit_error(const char *s);
+
+static char* pgrm_name = NULL;
 
 int main(int argc, char* argv[])
 {
+    pgrm_name = argv[0];
     graph_t g;
     memset(&g, 0, sizeof(g));
 
     init_graph(&g, argv + 1);
-    print_adj_mat(&g);
+    // print_adj_mat(&g);
 
     set_random_seed();    
 
@@ -42,9 +46,10 @@ int main(int argc, char* argv[])
     res_set_t rs;
     memset(&rs, 0, sizeof(rs));
 
-    size_t count = 50;
+    size_t count = 1000000000000000000;
 
     //main loop generator
+    char** adj_mat_buffer = NULL;
     while(count-- > 0) {
         //assign random color to each vertex
         
@@ -53,10 +58,19 @@ int main(int argc, char* argv[])
         
         //restore original adj matrix for new run
         // int adj_mat_buffer[g.num_vertices][g.num_vertices];
-        int** adj_mat_buffer;
-        init_2D_mat(&adj_mat_buffer, g.num_vertices);
+        // char** adj_mat_buffer;
+        if(adj_mat_buffer == NULL)
+            init_2D_mat(&adj_mat_buffer, g.num_vertices);
         
-        memcpy(*adj_mat_buffer, *g.adj_mat, g.num_vertices * g.num_vertices * sizeof(int));
+        memcpy(*adj_mat_buffer, *g.adj_mat, g.num_vertices * g.num_vertices );
+
+
+        // printf("----\n");
+        // graph_t gtest;
+        // gtest.num_vertices = g.num_vertices;
+        // gtest.adj_mat = adj_mat_buffer;
+        // print_adj_mat(&gtest);
+
 
         for(size_t i = 0; i < g.num_vertices; i++)
         {        
@@ -83,13 +97,13 @@ int main(int argc, char* argv[])
             break;
         }
 
-        for(size_t i = 0; i < MAX_RESULT_EDGES; i++)
-        {
-            if(rs.edges[i] == 0) break;
-            printf("%d-%d\n", DECODE_U(rs.edges[i]), DECODE_V(rs.edges[i]));
-        }
-
-        printf("---------\n");
+        //debug output
+        // for(size_t i = 0; i < MAX_RESULT_EDGES; i++)
+        // {
+        //     if(rs.edges[i] == 0) break;
+        //     printf("%d-%d\n", DECODE_U(rs.edges[i]), DECODE_V(rs.edges[i]));
+        // }
+        // printf("---------\n");
 
         //write to shared mem
         //clean local buffer;
@@ -151,7 +165,7 @@ static void init_graph(graph_t* g, char** pedges) {
     int num_vertices = max_idx + 1;
     g->num_vertices = num_vertices;
 
-    g->vertices = malloc(num_vertices);
+    g->vertices = malloc(num_vertices * sizeof(int));
     memset(g->vertices, 0, num_vertices);
 
     //init 2D adjacency matrix
@@ -181,12 +195,14 @@ static void print_adj_mat(graph_t* g) {
     
 }
 
-static void init_2D_mat(int*** pmat, int numrows) {
-    *pmat = malloc(numrows * sizeof(int *));
-	(*pmat)[0] = malloc(numrows * numrows * sizeof(int));
+static void init_2D_mat(char*** pmat, int numrows) {
+    *pmat = malloc(numrows * sizeof(char *));
+    if(*pmat == NULL) exit_error("malloc failed");
+	(*pmat)[0] = malloc(numrows * numrows );
+    if((*pmat)[0] == NULL) exit_error("malloc failed");
 
     //zero allocation
-    memset((*pmat)[0], 0, numrows * numrows * sizeof(int));
+    memset((*pmat)[0], 0, numrows * numrows );
 
 	for(int i = 1; i < numrows; i++)
 		(*pmat)[i] = (*pmat)[0] + i * numrows;
@@ -198,6 +214,22 @@ static void set_random_seed(void) {
 
     /* using nano-seconds instead of seconds */
     srand((time_t)ts.tv_nsec);
+}
+
+/**
+ * Prints an error message and exits with code 1
+ * @brief This function prints the error message specified as argument, prints
+ * it to stderr with additionally information if errno is set
+ * @param[in]   s  error message to be printed
+ */
+static void exit_error(const char *s)
+{
+    if (errno == 0)
+        fprintf(stderr, "[%s]: %s\n", pgrm_name, s);
+    else
+        fprintf(stderr, "[%s]: %s, Error: %s\n", pgrm_name, s, strerror(errno));
+
+    exit(EXIT_FAILURE);
 }
 
 
