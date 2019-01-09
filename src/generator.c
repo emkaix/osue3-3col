@@ -27,7 +27,8 @@ static void init_graph(graph_t*, char**);
 static void init_2D_mat(char***, int);
 static void print_adj_mat(graph_t*);
 static void set_random_seed(void);
-static void exit_error(const char *s);
+static void exit_error(const char*);
+static void map_shared_mem(myshm_t**);
 
 static char* pgrm_name = NULL;
 
@@ -42,6 +43,8 @@ int main(int argc, char* argv[])
 
     set_random_seed();    
 
+    myshm_t* shm;
+    map_shared_mem(&shm);
 
     res_set_t rs;
     memset(&rs, 0, sizeof(rs));
@@ -106,37 +109,22 @@ int main(int argc, char* argv[])
         // printf("---------\n");
 
         //write to shared mem
+        memcpy(&(shm->data[0]), &rs, sizeof(res_set_t));
         //clean local buffer;
         memset(&rs.edges, 0, sizeof(rs.edges));
         rs.num_edges = 0;
     }
 
-    
 
-    // int testrtttt = 2;
-
-    // int shmfd = shm_open("/test_shm", O_RDWR, 0400);
-    // if(shmfd == -1) {
-    //     strerror(errno);
-    //     perror("error shm_open");
-    // }
-
-    // ftruncate(shmfd, sizeof(myshm_t));
-
-    // myshm_t* p_mshm = mmap(NULL, sizeof(*p_mshm), PROT_READ | PROT_WRITE, MAP_SHARED, shmfd, 0);
-
-    // if(p_mshm == MAP_FAILED){
-    //     strerror(errno);
-    //     perror("error map");
-    // }
 
     // close(shmfd);
-    // munmap(p_mshm, sizeof(*p_mshm));
-    // shm_unlink("/test_shm");
+    munmap(shm, sizeof(myshm_t));
+    // shm_unlink(SHM_NAME);
 
 
     free(g.vertices);
     free(g.adj_mat);
+    free(g.adj_mat[0]);
     return EXIT_SUCCESS;
 }
 
@@ -232,5 +220,21 @@ static void exit_error(const char *s)
     exit(EXIT_FAILURE);
 }
 
+static void map_shared_mem(myshm_t** pshm) {
+    int shmfd = shm_open(SHM_NAME, O_RDWR, 0400);
+    if(shmfd == -1) {
+        strerror(errno);
+        perror("error shm_open");
+    }
 
+    ftruncate(shmfd, sizeof(myshm_t));
+
+    *pshm = mmap(NULL, sizeof(myshm_t), PROT_READ | PROT_WRITE, MAP_SHARED, shmfd, 0);
+
+    if(*pshm == MAP_FAILED){
+        strerror(errno);
+        perror("error map");
+    }
+
+}
 

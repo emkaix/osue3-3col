@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <errno.h>
+#include <signal.h>
+#include <stdbool.h>
 #include "shared.h"
 
 
@@ -13,34 +15,50 @@ static char* pgrm_name = NULL;
 
 static void exit_error(const char*);
 
+typedef struct addrinfo addrinfo_t;             /*!< typedef for the standard addrinfo struct */
+typedef struct sigaction sigaction_t;           /*!< used for registering a signal callback function */
+static void handlesignal(int);
+static volatile bool should_terminate = false;  /*!< when set via signal callback, the server closes gracefully */
+
+
 int main(int argc, char** argv)
 {
-    // pgrm_name = argv[0];
+    pgrm_name = argv[0];
 
-    // int shmfd = shm_open(SHM_NAME, O_RDWR | O_CREAT, PERM_OWNER_RW);
-    // if(shmfd < 0)
-    //     exit_error("shm_open failed");
+    //signal handler is executed whenever SIGINT or SIGTERM occurs
+    sigaction_t sa;
+    memset(&sa, 0, sizeof(sigaction_t));
+    sa.sa_handler = handlesignal;
+    sigaction(SIGINT, &sa, NULL);
+    sigaction(SIGTERM, &sa, NULL);
 
-    // if(ftruncate(shmfd, sizeof(myshm_t)) < 0)
-    //     exit_error("ftruncated failed");
+    int shmfd = shm_open(SHM_NAME, O_RDWR | O_CREAT, PERM_OWNER_RW);
+    if(shmfd < 0)
+        exit_error("shm_open failed");
 
-    // myshm_t* p_mshm = mmap(NULL, sizeof(*p_mshm), PROT_READ | PROT_WRITE, MAP_SHARED, shmfd, 0);
+    if(ftruncate(shmfd, sizeof(myshm_t)) < 0)
+        exit_error("ftruncated failed");
 
-    // if(p_mshm == MAP_FAILED)
-    //     exit_error("mmap failed");
+    myshm_t* p_mshm = mmap(NULL, sizeof(*p_mshm), PROT_READ | PROT_WRITE, MAP_SHARED, shmfd, 0);
 
-    // if(close(shmfd) < 0)
-    //     exit_error("close fd failed");
+    if(p_mshm == MAP_FAILED)
+        exit_error("mmap failed");
 
-    // p_mshm->data[0] = 1234;
-
-
-    // munmap(p_mshm, sizeof(*p_mshm));
-    // shm_unlink(SHM_NAME);
+    if(close(shmfd) < 0)
+        exit_error("close fd failed");
 
 
+    //main loop
+    while(!should_terminate) {
+        int dummy = 3;
+    }
 
-    // return EXIT_SUCCESS;
+    munmap(p_mshm, sizeof(*p_mshm));
+    shm_unlink(SHM_NAME);
+
+
+    printf("exit gracefully\n");
+    return EXIT_SUCCESS;
 }
 
 /**
@@ -58,3 +76,9 @@ static void exit_error(const char *s)
 
     exit(EXIT_FAILURE);
 }
+
+static void handlesignal(int signal) {
+    should_terminate = true;
+}
+
+
