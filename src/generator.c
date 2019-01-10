@@ -117,8 +117,8 @@ int main(int argc, const char** argv)
 
 
     free(g.vertices);
-    free(g.adj_mat);
     free(g.adj_mat[0]);
+    free(g.adj_mat);
 
 
 
