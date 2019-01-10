@@ -26,6 +26,8 @@ int main(int argc, const char** argv)
     //init shared memory
     shm_t* shm;
     create_shared_mem(&shm);
+    shm->state = 0;
+    shm->write_pos = 0;
 
     //init semaphore
     sem_t *sem_free;

@@ -25,7 +25,7 @@ int main(int argc, const char** argv)
 {
     //init 
     pgrm_name = argv[0];
-    int write_pos = 0;
+    // int write_pos = 0;
     set_random_seed();
 
     graph_t g;
@@ -92,11 +92,12 @@ int main(int argc, const char** argv)
         sem_wait(sem_wmutex);
         sem_wait(sem_free);
         if (shm->state == 0)
-            shm->data[write_pos] = rs;
+            // shm->data[shm->write_pos] = rs;
+            shm->data[shm->write_pos] = rs;
         else break;
 
         sem_post(sem_used);
-        write_pos = (write_pos + 1) % CIRCULAR_BUFFER_SIZE;
+        shm->write_pos = (shm->write_pos + 1) % CIRCULAR_BUFFER_SIZE;
         sem_post(sem_wmutex);
     }
 

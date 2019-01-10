@@ -33,6 +33,7 @@ typedef struct rset {
 
 typedef struct shm {
     unsigned int state;
+    int write_pos;
     rset_t data[CIRCULAR_BUFFER_SIZE];
 } shm_t;
 
