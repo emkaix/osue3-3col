@@ -83,12 +83,8 @@ int main(int argc, const char** argv)
         read_pos = (read_pos + 1) % CIRCULAR_BUFFER_SIZE;
     }
 
-    // printf("vor wmutex\n");
-    // sem_post(sem_free);
-    // sem_wait(sem_wmutex);
-    // printf("nach wmutex\n");
+    sem_post(sem_free);
     shm->state = 1;
-    // sem_post(sem_wmutex);
 
     if(munmap(shm, sizeof(shm_t)) < 0)
         exit_error("munmap failed");

@@ -23,6 +23,13 @@ int main(int argc, const char** argv)
 {
     //init
     pgrm_name = argv[0];
+
+    if (argc == 1)
+    {
+        fprintf(stderr, "[%s]: correct usage: generator EDGE1...\n", pgrm_name);
+        exit_error("invalid number of arguments");
+    }
+
     set_random_seed();
 
     graph_t g;
@@ -84,14 +91,11 @@ int main(int argc, const char** argv)
 
         //write to shared mem
         sem_wait(sem_wmutex);
-        printf("in wmutex\n");
         if (shm->state == 1) {
             sem_post(sem_wmutex);
             break;
         }
-
         sem_wait(sem_free);
-        printf("in free\n");
         if (shm->state == 0)
             shm->data[shm->write_pos] = rs;
         else break;
