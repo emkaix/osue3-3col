@@ -25,7 +25,6 @@ int main(int argc, const char** argv)
 {
     //init 
     pgrm_name = argv[0];
-    // int write_pos = 0;
     set_random_seed();
 
     graph_t g;
@@ -92,7 +91,6 @@ int main(int argc, const char** argv)
         sem_wait(sem_wmutex);
         sem_wait(sem_free);
         if (shm->state == 0)
-            // shm->data[shm->write_pos] = rs;
             shm->data[shm->write_pos] = rs;
         else break;
 
@@ -113,7 +111,8 @@ int main(int argc, const char** argv)
     if (sem_close(sem_wmutex) < 0)
         exit_error("sem_close failed");
 
-    if (sem_unlink(SEM_WMUTEX_NAME) < 0)
+    errno = 0;
+    if (sem_unlink(SEM_WMUTEX_NAME) < 0 && errno != ENOENT) //no such file or directory (already unlinked)
         exit_error("sem_unlink failed");
 
 
