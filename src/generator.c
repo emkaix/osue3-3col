@@ -24,6 +24,7 @@ static shm_t* shm = NULL;
 static sem_t* sem_free = NULL;
 static sem_t* sem_used = NULL;
 static sem_t* sem_wmutex = NULL;
+static char** adj_mat_buffer = NULL;
 static const char* pgrm_name = NULL;
 
 int main(int argc, const char** argv)
@@ -51,17 +52,13 @@ int main(int argc, const char** argv)
     print_adj_mat(&g);
     map_shared_mem(&shm);
     open_semaphores(&sem_free, &sem_used, &sem_wmutex);
+    init_2D_mat(&adj_mat_buffer, g.num_vertices);
 
-    //main loop
-    char** adj_mat_buffer = NULL;
+    //main loop    
     while(shm->state == 0) {
         //assign random color to each vertex        
         for(size_t i = 0; i < g.num_vertices; i++)
             g.vertices[i] = rand() % 3;
-        
-        //init buffer adjacency matrix only once
-        if(adj_mat_buffer == NULL)
-            init_2D_mat(&adj_mat_buffer, g.num_vertices);
         
         //restore original state
         memcpy(*adj_mat_buffer, *g.adj_mat, g.num_vertices * g.num_vertices );
@@ -251,5 +248,7 @@ static void free_resources(void) {
     free(g.vertices);
     free(g.adj_mat[0]);
     free(g.adj_mat);
+    free(adj_mat_buffer[0]);
+    free(adj_mat_buffer);
 }
 
