@@ -2,8 +2,6 @@
 #include <time.h>
 #include "shared.h"
 
-#define SEM_WMUTEX_NAME "/11775823_sem_wmutex"
-
 typedef struct graph {
     int num_edges;
     int num_vertices;
@@ -17,7 +15,7 @@ static void print_adj_mat(graph_t* const);
 static void set_random_seed(void);
 static void exit_error(const char*);
 static void map_shared_mem(shm_t** const);
-static void open_semaphores(sem_t** const, sem_t** const);
+static void open_semaphores(sem_t** const, sem_t** const, sem_t** const);
 
 static const char* pgrm_name = NULL;
 
@@ -40,10 +38,7 @@ int main(int argc, const char** argv)
     init_graph(&g, argv + 1);
     print_adj_mat(&g);
     map_shared_mem(&shm);
-    open_semaphores(&sem_free, &sem_used);
-
-    if ((sem_wmutex = sem_open(SEM_WMUTEX_NAME, O_CREAT, PERM_OWNER_RW, 1)) == SEM_FAILED)
-        exit_error("sem_open failed");
+    open_semaphores(&sem_free, &sem_used, &sem_wmutex);
 
     //main loop
     char** adj_mat_buffer = NULL;
@@ -89,7 +84,14 @@ int main(int argc, const char** argv)
 
         //write to shared mem
         sem_wait(sem_wmutex);
+        printf("in wmutex\n");
+        if (shm->state == 1) {
+            sem_post(sem_wmutex);
+            break;
+        }
+
         sem_wait(sem_free);
+        printf("in free\n");
         if (shm->state == 0)
             shm->data[shm->write_pos] = rs;
         else break;
@@ -111,9 +113,7 @@ int main(int argc, const char** argv)
     if (sem_close(sem_wmutex) < 0)
         exit_error("sem_close failed");
 
-    errno = 0;
-    if (sem_unlink(SEM_WMUTEX_NAME) < 0 && errno != ENOENT) //no such file or directory (already unlinked)
-        exit_error("sem_unlink failed");
+
 
 
     free(g.vertices);
@@ -241,10 +241,13 @@ static void map_shared_mem(shm_t** const pshm) {
         exit_error("closing shmfd failed");
 }
 
-static void open_semaphores(sem_t** const sem_free, sem_t** const sem_used) {
+static void open_semaphores(sem_t** const sem_free, sem_t** const sem_used, sem_t** const sem_wmutex) {
     if ((*sem_free = sem_open(SEM_FREE_NAME, 0)) == SEM_FAILED)
         exit_error("sem_open failed");
 
     if ((*sem_used = sem_open(SEM_USED_NAME, 0)) == SEM_FAILED)
+        exit_error("sem_open failed");
+
+    if ((*sem_wmutex = sem_open(SEM_WMUTEX_NAME, 0)) == SEM_FAILED)
         exit_error("sem_open failed");
 }

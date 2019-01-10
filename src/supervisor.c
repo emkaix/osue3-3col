@@ -8,7 +8,7 @@ typedef struct sigaction sigaction_t;           /*!< used for registering a sign
 static void handle_signal(int);
 static void exit_error(const char*);
 static void create_shared_mem(shm_t** const);
-static void create_semaphores(sem_t** const, sem_t** const);
+static void create_semaphores(sem_t** const, sem_t** const, sem_t** const);
 static void init_signal_handling(sigaction_t* const);
 
 static volatile bool should_terminate = false;  /*!< when set via signal callback, the server closes gracefully */
@@ -39,7 +39,8 @@ int main(int argc, const char** argv)
     //init semaphore
     sem_t *sem_free;
     sem_t *sem_used;
-    create_semaphores(&sem_free, &sem_used);
+    sem_t *sem_wmutex;
+    create_semaphores(&sem_free, &sem_used, &sem_wmutex);
 
     //main loop
     int read_pos = 0;
@@ -82,7 +83,12 @@ int main(int argc, const char** argv)
         read_pos = (read_pos + 1) % CIRCULAR_BUFFER_SIZE;
     }
 
+    // printf("vor wmutex\n");
+    // sem_post(sem_free);
+    // sem_wait(sem_wmutex);
+    // printf("nach wmutex\n");
     shm->state = 1;
+    // sem_post(sem_wmutex);
 
     if(munmap(shm, sizeof(shm_t)) < 0)
         exit_error("munmap failed");
@@ -96,10 +102,17 @@ int main(int argc, const char** argv)
     if (sem_close(sem_used) < 0)
         exit_error("sem_close failed");
 
+    if (sem_close(sem_wmutex) < 0)
+        exit_error("sem_close failed");
+
     if (sem_unlink(SEM_FREE_NAME) < 0)
         exit_error("sem_unlink failed");
 
     if (sem_unlink(SEM_USED_NAME) < 0)
+        exit_error("sem_unlink failed");
+
+    errno = 0;
+    if (sem_unlink(SEM_WMUTEX_NAME) < 0 && errno != ENOENT) //no such file or directory (already unlinked)
         exit_error("sem_unlink failed");
 
     printf("exit gracefully\n");
@@ -143,11 +156,14 @@ static void create_shared_mem(shm_t** const pshm) {
         exit_error("close fd failed");
 }
 
-static void create_semaphores(sem_t** const sem_free, sem_t** const sem_used) {
+static void create_semaphores(sem_t** const sem_free, sem_t** const sem_used, sem_t** const sem_wmutex) {
     if ((*sem_free = sem_open(SEM_FREE_NAME, O_CREAT | O_EXCL, PERM_OWNER_RW, CIRCULAR_BUFFER_SIZE)) == SEM_FAILED)
         exit_error("sem_open failed");
 
     if ((*sem_used = sem_open(SEM_USED_NAME, O_CREAT | O_EXCL, PERM_OWNER_RW, 0)) == SEM_FAILED)
+        exit_error("sem_open failed");
+
+    if ((*sem_wmutex = sem_open(SEM_WMUTEX_NAME, O_CREAT | O_EXCL, PERM_OWNER_RW, 1)) == SEM_FAILED)
         exit_error("sem_open failed");
 }
 
