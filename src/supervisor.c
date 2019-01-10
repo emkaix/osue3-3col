@@ -19,6 +19,13 @@ int main(int argc, const char** argv)
 {
     pgrm_name = argv[0];
 
+    //program must be executed without any options or arguments per synopsis
+    if (argc != 1)
+    {
+        fprintf(stderr, "[%s]: correct usage: supervisor\n", pgrm_name);
+        exit_error("invalid number of arguments");
+    }
+
     //signal handler is executed whenever SIGINT or SIGTERM occurs
     sigaction_t sa;
     init_signal_handling(&sa);

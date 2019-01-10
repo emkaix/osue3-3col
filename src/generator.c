@@ -23,7 +23,7 @@ static const char* pgrm_name = NULL;
 
 int main(int argc, const char** argv)
 {
-    //init 
+    //init
     pgrm_name = argv[0];
     set_random_seed();
 
