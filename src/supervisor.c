@@ -10,14 +10,24 @@ static void exit_error(const char*);
 static void create_shared_mem(shm_t** const);
 static void create_semaphores(sem_t** const, sem_t** const, sem_t** const);
 static void init_signal_handling(sigaction_t* const);
+static void free_resources(void);
 
 static volatile bool should_terminate = false;  /*!< when set via signal callback, the server closes gracefully */
 static const char* pgrm_name = NULL;
 
+static sem_t* sem_free = NULL;
+static sem_t* sem_used = NULL;
+static sem_t* sem_wmutex = NULL;
+static shm_t* shm = NULL;
 
 int main(int argc, const char** argv)
 {
     pgrm_name = argv[0];
+
+        if(atexit(free_resources) != 0) {
+        fprintf(stderr, "[%s]: atexit register failed, Error: %s\n", pgrm_name, strerror(errno));
+        exit(EXIT_FAILURE);
+    }
 
     //program must be executed without any options or arguments per synopsis
     if (argc != 1)
@@ -31,15 +41,11 @@ int main(int argc, const char** argv)
     init_signal_handling(&sa);
 
     //init shared memory
-    shm_t* shm;
     create_shared_mem(&shm);
     shm->state = 0;
     shm->write_pos = 0;
 
     //init semaphore
-    sem_t *sem_free;
-    sem_t *sem_used;
-    sem_t *sem_wmutex;
     create_semaphores(&sem_free, &sem_used, &sem_wmutex);
 
     //main loop
@@ -50,7 +56,6 @@ int main(int argc, const char** argv)
     while(!should_terminate) {
         if (sem_wait(sem_used) < 0) {
             if (errno == EINTR) {
-                printf("intr in wait\n");
                 continue;
             }
             exit_error("sem_wait failed");
@@ -86,32 +91,8 @@ int main(int argc, const char** argv)
     sem_post(sem_free);
     shm->state = 1;
 
-    if(munmap(shm, sizeof(shm_t)) < 0)
-        exit_error("munmap failed");
-        
-    if(shm_unlink(SHM_NAME) < 0)
-        exit_error("shm_unlink failed");
 
-    if (sem_close(sem_free) < 0)
-        exit_error("sem_close failed");
-
-    if (sem_close(sem_used) < 0)
-        exit_error("sem_close failed");
-
-    if (sem_close(sem_wmutex) < 0)
-        exit_error("sem_close failed");
-
-    if (sem_unlink(SEM_FREE_NAME) < 0)
-        exit_error("sem_unlink failed");
-
-    if (sem_unlink(SEM_USED_NAME) < 0)
-        exit_error("sem_unlink failed");
-
-    errno = 0;
-    if (sem_unlink(SEM_WMUTEX_NAME) < 0 && errno != ENOENT) //no such file or directory (already unlinked)
-        exit_error("sem_unlink failed");
-
-    printf("exit gracefully\n");
+    printf("Supervisor exits gracefully\n");
     return EXIT_SUCCESS;
 }
 
@@ -128,6 +109,7 @@ static void exit_error(const char *s)
     else
         fprintf(stderr, "[%s]: %s, Error: %s\n", pgrm_name, s, strerror(errno));
 
+    free_resources();
     exit(EXIT_FAILURE);
 }
 
@@ -170,4 +152,30 @@ static void init_signal_handling(sigaction_t* const sa) {
         exit_error("sigaction failed");
     if(sigaction(SIGTERM, sa, NULL) < 0)
         exit_error("sigaction failed");
+}
+
+static void free_resources(void) {
+    if(munmap(shm, sizeof(shm_t)) < 0)
+        fprintf(stderr, "[%s]: munmmap failed, Error: %s\n", pgrm_name, strerror(errno));
+        
+    if(shm_unlink(SHM_NAME) < 0)
+        fprintf(stderr, "[%s]: shm_unlink failed, Error: %s\n", pgrm_name, strerror(errno));
+
+    if (sem_close(sem_free) < 0)
+        fprintf(stderr, "[%s]: sem_close failed, Error: %s\n", pgrm_name, strerror(errno));
+
+    if (sem_close(sem_used) < 0)
+        fprintf(stderr, "[%s]: sem_close failed, Error: %s\n", pgrm_name, strerror(errno));
+
+    if (sem_close(sem_wmutex) < 0)
+        fprintf(stderr, "[%s]: sem_close failed, Error: %s\n", pgrm_name, strerror(errno));
+
+    if (sem_unlink(SEM_FREE_NAME) < 0)
+        fprintf(stderr, "[%s]: sem_unlink failed, Error: %s\n", pgrm_name, strerror(errno));
+
+    if (sem_unlink(SEM_USED_NAME) < 0)
+        fprintf(stderr, "[%s]: sem_unlink failed, Error: %s\n", pgrm_name, strerror(errno));
+
+    if (sem_unlink(SEM_WMUTEX_NAME) < 0 && errno != ENOENT) //no such file or directory (already unlinked)
+        fprintf(stderr, "[%s]: sem_unlink failed, Error: %s\n", pgrm_name, strerror(errno));
 }

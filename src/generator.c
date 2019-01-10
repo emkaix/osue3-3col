@@ -16,13 +16,25 @@ static void set_random_seed(void);
 static void exit_error(const char*);
 static void map_shared_mem(shm_t** const);
 static void open_semaphores(sem_t** const, sem_t** const, sem_t** const);
+static void free_resources(void);
 
+static graph_t g;
+static rset_t rs;
+static shm_t* shm = NULL;
+static sem_t* sem_free = NULL;
+static sem_t* sem_used = NULL;
+static sem_t* sem_wmutex = NULL;
 static const char* pgrm_name = NULL;
 
 int main(int argc, const char** argv)
 {
     //init
     pgrm_name = argv[0];
+
+    if(atexit(free_resources) != 0) {
+        fprintf(stderr, "[%s]: atexit register failed, Error: %s\n", pgrm_name, strerror(errno));
+        exit(EXIT_FAILURE);
+    }
 
     if (argc == 1)
     {
@@ -31,13 +43,6 @@ int main(int argc, const char** argv)
     }
 
     set_random_seed();
-
-    graph_t g;
-    rset_t rs;
-    shm_t* shm;
-    sem_t* sem_free;
-    sem_t* sem_used;
-    sem_t* sem_wmutex;
 
     memset(&g, 0, sizeof(g));
     memset(&rs, 0, sizeof(rs));
@@ -81,14 +86,6 @@ int main(int argc, const char** argv)
             }            
         }
 
-        //debug output
-        // for(size_t i = 0; i < MAX_RESULT_EDGES; i++)
-        // {
-        //     if(rs.edges[i] == 0) break;
-        //     printf("%d-%d\n", DECODE_U(rs.edges[i]), DECODE_V(rs.edges[i]));
-        // }
-        // printf("---------\n");
-
         //write to shared mem
         sem_wait(sem_wmutex);
         if (shm->state == 1) {
@@ -105,27 +102,7 @@ int main(int argc, const char** argv)
         sem_post(sem_wmutex);
     }
 
-    if(munmap(shm, sizeof(shm_t)) < 0)
-        exit_error("munmap failed");
-
-    if (sem_close(sem_free) < 0)
-        exit_error("sem_close failed");
-
-    if (sem_close(sem_used) < 0)
-        exit_error("sem_close failed");
-
-    if (sem_close(sem_wmutex) < 0)
-        exit_error("sem_close failed");
-
-
-
-
-    free(g.vertices);
-    free(g.adj_mat[0]);
-    free(g.adj_mat);
-
-
-
+    printf("Generator exits gracefully\n");
     return EXIT_SUCCESS;
 }
 
@@ -179,7 +156,8 @@ static void init_graph(graph_t* const g, const char** pedges) {
     }
 }
 
-static void print_adj_mat(graph_t* const g) {    
+static void print_adj_mat(graph_t* const g) {  
+    printf("adjacency matrix:\n");  
     for(size_t i = 0; i < g->num_vertices; i++)
     {   
         for(size_t j = 0; j < g->num_vertices; j++)
@@ -227,6 +205,7 @@ static void exit_error(const char *s)
     else
         fprintf(stderr, "[%s]: %s, Error: %s\n", pgrm_name, s, strerror(errno));
 
+    free_resources();
     exit(EXIT_FAILURE);
 }
 
@@ -255,3 +234,22 @@ static void open_semaphores(sem_t** const sem_free, sem_t** const sem_used, sem_
     if ((*sem_wmutex = sem_open(SEM_WMUTEX_NAME, 0)) == SEM_FAILED)
         exit_error("sem_open failed");
 }
+
+static void free_resources(void) {
+    if(munmap(shm, sizeof(shm_t)) < 0)
+        fprintf(stderr, "[%s]: munmmap failed, Error: %s\n", pgrm_name, strerror(errno));
+
+    if (sem_close(sem_free) < 0)
+        fprintf(stderr, "[%s]: sem_close failed, Error: %s\n", pgrm_name, strerror(errno));
+
+    if (sem_close(sem_used) < 0)
+        fprintf(stderr, "[%s]: sem_close failed, Error: %s\n", pgrm_name, strerror(errno));
+
+    if (sem_close(sem_wmutex) < 0)
+        fprintf(stderr, "[%s]: sem_close failed, Error: %s\n", pgrm_name, strerror(errno));
+
+    free(g.vertices);
+    free(g.adj_mat[0]);
+    free(g.adj_mat);
+}
+
