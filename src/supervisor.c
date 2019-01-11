@@ -147,7 +147,7 @@ static void exit_error(const char *s)
  * @brief This function is executed whenever the program receives a SIGTERM or SIGINT signal
  * @param[in]  signal   the signal to be handled
  */
-static static void handle_signal(int signal)
+static void handle_signal(int signal)
 {
     should_terminate = true;
 }
