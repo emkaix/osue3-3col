@@ -1,38 +1,70 @@
+/**
+ * @file supervisor.c
+ * @author Klaus Hahnenkamp <e11775823@student.tuwien.ac.at>
+ * @date 10.01.2019
+ *
+ * @brief Generator program module.
+ * 
+ * The generator program takes a graph as input. The program repeatedly generates a random solution
+ * to the problem as described on the first page and writes its result to the circular buffer. It repeats this
+ * procedure until it is notified by the supervisor to terminate.
+ *
+ **/
+
 #include <math.h>
 #include <time.h>
 #include "shared.h"
 
-typedef struct graph {
-    int num_edges;
-    int num_vertices;
-    char** adj_mat;
-    int* vertices;
-} graph_t;
+typedef struct graph
+{
+    int num_edges;                  /*!< number of edges */
+    int num_vertices;               /*!< number of vertices */
+    char **adj_mat;                 /*!< adjacency matrix */
+    int *vertices;                  /*!< pointer to the vertices */
+} graph_t;                          /*!< representing the input graph */
 
-static void init_graph(graph_t* const, const char**);
-static void init_2D_mat(char*** const, int);
-static void print_adj_mat(graph_t* const);
+static graph_t g;                    /*!< stores the data of the input graph */
+static rset_t rs;                    /*!< stores the data of the result set */
+static shm_t *shm = NULL;            /*!< pointer to the shared memory */
+static sem_t *sem_free = NULL;       /*!< pointer to the semaphore tracking the free space in the ring buffer */
+static sem_t *sem_used = NULL;       /*!< pointer to the semaphore tracking the used space in the ring buffer */
+static sem_t *sem_wmutex = NULL;     /*!< pointer to the semaphore used for mutex-access to the write end of the ring buffer */
+static char **adj_mat_buffer = NULL; /*!< stores a per-iteration copy of the adjacency matrix */
+static const char *pgrm_name = NULL; /*!< the program name, set in early stage of execution */
+
+static void init_graph(graph_t *const, const char **);
+static void init_2D_mat(char ***const, int);
+static void print_adj_mat(graph_t *const);
 static void set_random_seed(void);
-static void exit_error(const char*);
-static void map_shared_mem(shm_t** const);
-static void open_semaphores(sem_t** const, sem_t** const, sem_t** const);
+static void exit_error(const char *);
+static void map_shared_mem(shm_t **const);
+static void open_semaphores(sem_t **const, sem_t **const, sem_t **const);
 static void free_resources(void);
 
-static graph_t g;
-static rset_t rs;
-static shm_t* shm = NULL;
-static sem_t* sem_free = NULL;
-static sem_t* sem_used = NULL;
-static sem_t* sem_wmutex = NULL;
-static char** adj_mat_buffer = NULL;
-static const char* pgrm_name = NULL;
-
-int main(int argc, const char** argv)
+/**
+ * Main entry point of the generator program
+ * @brief This function sets up the input graph, performs
+ * the monte-carlo-algorithm for findinf a 3-colorable solution
+ * for the input graph and writes the result sets in the ring buffer
+ * @param[in]  argc     argument count
+ * @param[in]  argv     argument vector
+ * @returns returns     EXIT_SUCCESS
+ * @details global variables: g
+ * @details global variables: rs
+ * @details global variables: shm
+ * @details global variables: sem_free
+ * @details global variables: sem_used
+ * @details global variables: sem_wmutex
+ * @details global variables: adj_mat_buffer
+ * @details global variables: pgrm_name
+ */
+int main(int argc, const char **argv)
 {
     //init
     pgrm_name = argv[0];
 
-    if(atexit(free_resources) != 0) {
+    if (atexit(free_resources) != 0)
+    {
         fprintf(stderr, "[%s]: atexit register failed, Error: %s\n", pgrm_name, strerror(errno));
         exit(EXIT_FAILURE);
     }
@@ -54,45 +86,50 @@ int main(int argc, const char** argv)
     open_semaphores(&sem_free, &sem_used, &sem_wmutex);
     init_2D_mat(&adj_mat_buffer, g.num_vertices);
 
-    //main loop    
-    while(shm->state == 0) {
-        //assign random color to each vertex        
-        for(size_t i = 0; i < g.num_vertices; i++)
+    //main loop
+    while (shm->state == 0)
+    {
+        //assign random color to each vertex
+        for (size_t i = 0; i < g.num_vertices; i++)
             g.vertices[i] = rand() % 3;
-        
+
         //restore original state
-        memcpy(*adj_mat_buffer, *g.adj_mat, g.num_vertices * g.num_vertices );
+        memcpy(*adj_mat_buffer, *g.adj_mat, g.num_vertices * g.num_vertices);
         memset(&rs.edges, 0, sizeof(rs.edges));
         rs.num_edges = 0;
 
         //iterate over adjacency matrix and check for same color of two connected vertices
-        for(size_t i = 0; i < g.num_vertices; i++)
-        {        
-            for(size_t j = 0; j < g.num_vertices; j++)
+        for (size_t i = 0; i < g.num_vertices; i++)
+        {
+            for (size_t j = 0; j < g.num_vertices; j++)
             {
                 //skip if there is no edge between these vertices
-                if (adj_mat_buffer[i][j] == 0) continue;
+                if (adj_mat_buffer[i][j] == 0)
+                    continue;
 
-               //if the two vertices have the same color, remove them from adj mat, add to result set
-                if (g.vertices[i] == g.vertices[j]) {
+                //if the two vertices have the same color, remove them from adj mat, add to result set
+                if (g.vertices[i] == g.vertices[j])
+                {
                     adj_mat_buffer[i][j] = 0;
 
                     if (rs.num_edges < MAX_RESULT_EDGES)
                         rs.edges[rs.num_edges++] = ENCODE(i, j);
                 }
-            }            
+            }
         }
 
         //write to shared mem
         sem_wait(sem_wmutex);
-        if (shm->state == 1) {
+        if (shm->state == 1)
+        {
             sem_post(sem_wmutex);
             break;
         }
         sem_wait(sem_free);
         if (shm->state == 0)
             shm->data[shm->write_pos] = rs;
-        else break;
+        else
+            break;
 
         sem_post(sem_used);
         shm->write_pos = (shm->write_pos + 1) % CIRCULAR_BUFFER_SIZE;
@@ -103,22 +140,32 @@ int main(int argc, const char** argv)
     return EXIT_SUCCESS;
 }
 
-static void init_graph(graph_t* const g, const char** pedges) {
+/**
+ * initialize graph
+ * @brief This function parses the edge data passed as program arguments and
+ * stores the data such as number of vertices, number of edges, highest index in
+ * the graph_t pointer
+ * @param[out]  g       pointer to a graph to store the data
+ * @param[in]   pedges  pointer to the edges passed as program arguments
+ */
+static void init_graph(graph_t *const g, const char **pedges)
+{
     int max_idx = 0;
     int num_edges = 0;
-    const char** buffer = pedges;
+    const char **buffer = pedges;
 
     // get highest vertex index
-    while(*buffer != NULL) {
-        char* end;
+    while (*buffer != NULL)
+    {
+        char *end;
         //for error checking on strtol
         errno = 0;
         int u = strtol(*buffer, &end, 10);
         int v = strtol(++end, NULL, 10);
-        if(errno != 0)
+        if (errno != 0)
             exit_error("edge parsing error");
 
-        if(u > max_idx || v > max_idx)
+        if (u > max_idx || v > max_idx)
             max_idx = u > v ? u : v;
 
         num_edges++;
@@ -130,22 +177,23 @@ static void init_graph(graph_t* const g, const char** pedges) {
     g->num_edges = num_edges;
 
     //init vertices for coloring
-    if((g->vertices = malloc(num_vertices * sizeof(int))) == NULL)
+    if ((g->vertices = malloc(num_vertices * sizeof(int))) == NULL)
         exit_error("malloc failed");
-    
+
     memset(g->vertices, 0, num_vertices);
 
     //init 2D adjacency matrix
     init_2D_mat(&g->adj_mat, num_vertices);
 
     //fill adjacency matrix
-    while(*pedges != NULL) {
-        char* end;
+    while (*pedges != NULL)
+    {
+        char *end;
         //for error checking on strtol
         errno = 0;
         int u = strtol(*pedges, &end, 10);
         int v = strtol(++end, NULL, 10);
-        if(errno != 0)
+        if (errno != 0)
             exit_error("edge parsing error");
 
         g->adj_mat[u][v] = 1;
@@ -153,36 +201,56 @@ static void init_graph(graph_t* const g, const char** pedges) {
     }
 }
 
-static void print_adj_mat(graph_t* const g) {  
-    printf("adjacency matrix:\n");  
-    for(size_t i = 0; i < g->num_vertices; i++)
-    {   
-        for(size_t j = 0; j < g->num_vertices; j++)
+/**
+ * print adjacency matrix
+ * @brief This function prints the contents of the adjacency matrix to stdout
+ * @param[in]  g    pointer to a graph to store the data
+ */
+static void print_adj_mat(graph_t *const g)
+{
+    printf("adjacency matrix:\n");
+    for (size_t i = 0; i < g->num_vertices; i++)
+    {
+        for (size_t j = 0; j < g->num_vertices; j++)
         {
             printf("[%d] ", g->adj_mat[i][j]);
         }
         printf("\n");
-    }    
+    }
 }
 
-static void init_2D_mat(char*** const pmat, int numrows) {
-    if((*pmat = malloc(numrows * sizeof(char *))) == NULL) {
+/**
+ * initialize a 2D matrix
+ * @brief This function initializes a 2D of given size
+ * @param[out]  pmat        reference to a char pointer to store the data
+ * @param[in]   numrows     reference to a char pointer to store the data
+ */
+static void init_2D_mat(char ***const pmat, int numrows)
+{
+    if ((*pmat = malloc(numrows * sizeof(char *))) == NULL)
+    {
         exit_error("malloc failed");
-    }        
+    }
 
-	if(((*pmat)[0] = malloc(numrows * numrows)) == NULL) {
+    if (((*pmat)[0] = malloc(numrows * numrows)) == NULL)
+    {
         exit_error("malloc failed");
-    }        
-    
+    }
+
     memset((*pmat)[0], 0, numrows * numrows);
 
-	for(int i = 1; i < numrows; i++)
-		(*pmat)[i] = (*pmat)[0] + i * numrows;
+    for (int i = 1; i < numrows; i++)
+        (*pmat)[i] = (*pmat)[0] + i * numrows;
 }
 
-static void set_random_seed(void) {
+/**
+ * sets random seed
+ * @brief This function sets a seed based on current nanosecond time for rand function
+ */
+static void set_random_seed(void)
+{
     struct timespec ts;
-    if(clock_gettime(CLOCK_MONOTONIC, &ts) < 0)
+    if (clock_gettime(CLOCK_MONOTONIC, &ts) < 0)
         exit_error("clock_gettime failed");
 
     /* using nano-seconds instead of seconds */
@@ -206,22 +274,36 @@ static void exit_error(const char *s)
     exit(EXIT_FAILURE);
 }
 
-static void map_shared_mem(shm_t** const pshm) {
+/**
+ * map shared memory
+ * @brief This function maps a shared memory into the processes virtual adress space
+ * @param[in]   pshm    a reference to a pshm pointer
+ */
+static void map_shared_mem(shm_t **const pshm)
+{
     int shmfd;
-    if((shmfd = shm_open(SHM_NAME, O_RDWR, PERM_OWNER_R)) < 0)
+    if ((shmfd = shm_open(SHM_NAME, O_RDWR, PERM_OWNER_R)) < 0)
         exit_error("shm_open failed");
 
-    if(ftruncate(shmfd, sizeof(shm_t)) < 0)
+    if (ftruncate(shmfd, sizeof(shm_t)) < 0)
         exit_error("ftruncated failed");
 
-    if((*pshm = mmap(NULL, sizeof(shm_t), PROT_READ | PROT_WRITE, MAP_SHARED, shmfd, 0)) == MAP_FAILED)
+    if ((*pshm = mmap(NULL, sizeof(shm_t), PROT_READ | PROT_WRITE, MAP_SHARED, shmfd, 0)) == MAP_FAILED)
         exit_error("mmap failed");
-    
-    if(close(shmfd) < 0)
+
+    if (close(shmfd) < 0)
         exit_error("closing shmfd failed");
 }
 
-static void open_semaphores(sem_t** const sem_free, sem_t** const sem_used, sem_t** const sem_wmutex) {
+/**
+ * open semaphores
+ * @brief This function opens the semaphores used for synchronization set up by supervisor
+ * @param[out]  sem_free    a reference to the sem_free pointer
+ * @param[out]  sem_used    a reference to a sem_used pointer
+ * @param[out]  sem_wmutex  a reference to a sem_wmutex pointer
+ */
+static void open_semaphores(sem_t **const sem_free, sem_t **const sem_used, sem_t **const sem_wmutex)
+{
     if ((*sem_free = sem_open(SEM_FREE_NAME, 0)) == SEM_FAILED)
         exit_error("sem_open failed");
 
@@ -232,8 +314,13 @@ static void open_semaphores(sem_t** const sem_free, sem_t** const sem_used, sem_
         exit_error("sem_open failed");
 }
 
-static void free_resources(void) {
-    if(munmap(shm, sizeof(shm_t)) < 0)
+/**
+ * delete all resources used
+ * @brief This function unregisters and deletes all allocated resources
+ */
+static void free_resources(void)
+{
+    if (munmap(shm, sizeof(shm_t)) < 0)
         fprintf(stderr, "[%s]: munmmap failed, Error: %s\n", pgrm_name, strerror(errno));
 
     if (sem_close(sem_free) < 0)
@@ -251,4 +338,3 @@ static void free_resources(void) {
     free(adj_mat_buffer[0]);
     free(adj_mat_buffer);
 }
-

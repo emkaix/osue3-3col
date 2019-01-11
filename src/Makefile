@@ -12,13 +12,13 @@ all: supervisor generator
 generator: generator.o
 	gcc $(params) -g -o generator generator.o -lrt -pthread
 
-generator.o: generator.c
+generator.o: generator.c shared.h
 	gcc $(params) -g -o generator.o -c generator.c
 
 supervisor: supervisor.o
 	gcc $(params) -g -o supervisor supervisor.o -lrt -pthread
 
-supervisor.o: supervisor.c
+supervisor.o: supervisor.c shared.h
 	gcc $(params) -g -o supervisor.o -c supervisor.c
 
 
