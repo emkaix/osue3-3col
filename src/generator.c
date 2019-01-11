@@ -1,5 +1,5 @@
 /**
- * @file supervisor.c
+ * @file generator.c
  * @author Klaus Hahnenkamp <e11775823@student.tuwien.ac.at>
  * @date 10.01.2019
  *

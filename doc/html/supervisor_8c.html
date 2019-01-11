@@ -74,7 +74,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Generator program module.  
+<p>Supervisor program module.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;signal.h&gt;</code><br />
 <code>#include &lt;stdbool.h&gt;</code><br />
@@ -134,11 +134,7 @@ Variables</h2></td></tr>
 <tr class="separator:a1020ec0887fec05be0d837cfcf51b663"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Generator program module. </p>
-<p>Supervisor program module.</p>
-<dl class="section author"><dt>Author</dt><dd>Klaus Hahnenkamp <a href="#" onclick="location.href='mai'+'lto:'+'e11'+'77'+'582'+'3@'+'stu'+'de'+'nt.'+'tu'+'wie'+'n.'+'ac.'+'at'; return false;">e1177<span style="display: none;">.nosp@m.</span>5823<span style="display: none;">.nosp@m.</span>@stud<span style="display: none;">.nosp@m.</span>ent.<span style="display: none;">.nosp@m.</span>tuwie<span style="display: none;">.nosp@m.</span>n.ac<span style="display: none;">.nosp@m.</span>.at</a> </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>10.01.2019</dd></dl>
-<p>The generator program takes a graph as input. The program repeatedly generates a random solution to the problem as described on the first page and writes its result to the circular buffer. It repeats this procedure until it is notified by the supervisor to terminate.</p>
+<div class="textblock"><p>Supervisor program module. </p>
 <dl class="section author"><dt>Author</dt><dd>Klaus Hahnenkamp <a href="#" onclick="location.href='mai'+'lto:'+'e11'+'77'+'582'+'3@'+'stu'+'de'+'nt.'+'tu'+'wie'+'n.'+'ac.'+'at'; return false;">e1177<span style="display: none;">.nosp@m.</span>5823<span style="display: none;">.nosp@m.</span>@stud<span style="display: none;">.nosp@m.</span>ent.<span style="display: none;">.nosp@m.</span>tuwie<span style="display: none;">.nosp@m.</span>n.ac<span style="display: none;">.nosp@m.</span>.at</a> </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>10.01.2019</dd></dl>
 <p>The supervisor sets up the shared memory and the semaphores and initializes the circular buffer required for the communication with the generators. It then waits for the generators to write solutions to the circular buffer. </p>
