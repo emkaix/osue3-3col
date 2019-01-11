@@ -1,0 +1,170 @@
+\begin{theindex}
+
+  \item {/home/mkx/\+Dropbox/\+T\+U/3. Semester/\+Betriebssysteme/2. \IeC {\"U}bungen und Abgaben/\+Aufgabe\+\_\+4/src/shared.\+h}, 
+		\hyperpage{9}
+  \item {/home/mkx/\+Dropbox/\+T\+U/3. Semester/\+Betriebssysteme/2. \IeC {\"U}bungen und Abgaben/\+Aufgabe\+\_\+4/src/supervisor.\+c}, 
+		\hyperpage{13}
+
+  \indexspace
+
+  \item {adj\+\_\+mat}
+    \subitem {graph}, \hyperpage{5}
+
+  \indexspace
+
+  \item {C\+I\+R\+C\+U\+L\+A\+R\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}
+    \subitem {shared.\+h}, \hyperpage{11}
+  \item {create\+\_\+semaphores}
+    \subitem {supervisor.\+c}, \hyperpage{15}
+  \item {create\+\_\+shared\+\_\+mem}
+    \subitem {supervisor.\+c}, \hyperpage{15}
+
+  \indexspace
+
+  \item {D\+E\+C\+O\+D\+E\+\_\+U}
+    \subitem {shared.\+h}, \hyperpage{11}
+  \item {D\+E\+C\+O\+D\+E\+\_\+V}
+    \subitem {shared.\+h}, \hyperpage{11}
+  \item {data}
+    \subitem {shm}, \hyperpage{7}
+
+  \indexspace
+
+  \item {E\+N\+C\+O\+DE}
+    \subitem {shared.\+h}, \hyperpage{11}
+  \item {edges}
+    \subitem {rset}, \hyperpage{6}
+  \item {exit\+\_\+error}
+    \subitem {supervisor.\+c}, \hyperpage{15}
+
+  \indexspace
+
+  \item {free\+\_\+resources}
+    \subitem {supervisor.\+c}, \hyperpage{16}
+
+  \indexspace
+
+  \item {graph}, \hyperpage{5}
+    \subitem {adj\+\_\+mat}, \hyperpage{5}
+    \subitem {num\+\_\+edges}, \hyperpage{5}
+    \subitem {num\+\_\+vertices}, \hyperpage{5}
+    \subitem {vertices}, \hyperpage{5}
+
+  \indexspace
+
+  \item {handle\+\_\+signal}
+    \subitem {supervisor.\+c}, \hyperpage{16}
+
+  \indexspace
+
+  \item {init\+\_\+signal\+\_\+handling}
+    \subitem {supervisor.\+c}, \hyperpage{16}
+
+  \indexspace
+
+  \item {M\+A\+X\+\_\+\+R\+E\+S\+U\+L\+T\+\_\+\+E\+D\+G\+ES}
+    \subitem {shared.\+h}, \hyperpage{11}
+  \item {main}
+    \subitem {supervisor.\+c}, \hyperpage{17}
+
+  \indexspace
+
+  \item {num\+\_\+edges}
+    \subitem {graph}, \hyperpage{5}
+    \subitem {rset}, \hyperpage{6}
+  \item {num\+\_\+vertices}
+    \subitem {graph}, \hyperpage{5}
+
+  \indexspace
+
+  \item {P\+E\+R\+M\+\_\+\+O\+W\+N\+E\+R\+\_\+\+RW}
+    \subitem {shared.\+h}, \hyperpage{12}
+  \item {P\+E\+R\+M\+\_\+\+O\+W\+N\+E\+R\+\_\+R}
+    \subitem {shared.\+h}, \hyperpage{12}
+  \item {pgrm\+\_\+name}
+    \subitem {supervisor.\+c}, \hyperpage{17}
+
+  \indexspace
+
+  \item {rset}, \hyperpage{6}
+    \subitem {edges}, \hyperpage{6}
+    \subitem {num\+\_\+edges}, \hyperpage{6}
+  \item {rset\+\_\+t}
+    \subitem {shared.\+h}, \hyperpage{12}
+
+  \indexspace
+
+  \item {S\+E\+M\+\_\+\+F\+R\+E\+E\+\_\+\+N\+A\+ME}
+    \subitem {shared.\+h}, \hyperpage{12}
+  \item {S\+E\+M\+\_\+\+U\+S\+E\+D\+\_\+\+N\+A\+ME}
+    \subitem {shared.\+h}, \hyperpage{12}
+  \item {S\+E\+M\+\_\+\+W\+M\+U\+T\+E\+X\+\_\+\+N\+A\+ME}
+    \subitem {shared.\+h}, \hyperpage{12}
+  \item {S\+H\+M\+\_\+\+N\+A\+ME}
+    \subitem {shared.\+h}, \hyperpage{12}
+  \item {sem\+\_\+free}
+    \subitem {supervisor.\+c}, \hyperpage{17}
+  \item {sem\+\_\+used}
+    \subitem {supervisor.\+c}, \hyperpage{18}
+  \item {sem\+\_\+wmutex}
+    \subitem {supervisor.\+c}, \hyperpage{18}
+  \item {shared.\+h}
+    \subitem {C\+I\+R\+C\+U\+L\+A\+R\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}, 
+		\hyperpage{11}
+    \subitem {D\+E\+C\+O\+D\+E\+\_\+U}, \hyperpage{11}
+    \subitem {D\+E\+C\+O\+D\+E\+\_\+V}, \hyperpage{11}
+    \subitem {E\+N\+C\+O\+DE}, \hyperpage{11}
+    \subitem {M\+A\+X\+\_\+\+R\+E\+S\+U\+L\+T\+\_\+\+E\+D\+G\+ES}, 
+		\hyperpage{11}
+    \subitem {P\+E\+R\+M\+\_\+\+O\+W\+N\+E\+R\+\_\+\+RW}, 
+		\hyperpage{12}
+    \subitem {P\+E\+R\+M\+\_\+\+O\+W\+N\+E\+R\+\_\+R}, \hyperpage{12}
+    \subitem {rset\+\_\+t}, \hyperpage{12}
+    \subitem {S\+E\+M\+\_\+\+F\+R\+E\+E\+\_\+\+N\+A\+ME}, 
+		\hyperpage{12}
+    \subitem {S\+E\+M\+\_\+\+U\+S\+E\+D\+\_\+\+N\+A\+ME}, 
+		\hyperpage{12}
+    \subitem {S\+E\+M\+\_\+\+W\+M\+U\+T\+E\+X\+\_\+\+N\+A\+ME}, 
+		\hyperpage{12}
+    \subitem {S\+H\+M\+\_\+\+N\+A\+ME}, \hyperpage{12}
+    \subitem {shm\+\_\+t}, \hyperpage{13}
+  \item {shm}, \hyperpage{7}
+    \subitem {data}, \hyperpage{7}
+    \subitem {state}, \hyperpage{7}
+    \subitem {supervisor.\+c}, \hyperpage{18}
+    \subitem {write\+\_\+pos}, \hyperpage{7}
+  \item {shm\+\_\+t}
+    \subitem {shared.\+h}, \hyperpage{13}
+  \item {should\+\_\+terminate}
+    \subitem {supervisor.\+c}, \hyperpage{18}
+  \item {sigaction\+\_\+t}
+    \subitem {supervisor.\+c}, \hyperpage{15}
+  \item {state}
+    \subitem {shm}, \hyperpage{7}
+  \item {supervisor.\+c}
+    \subitem {create\+\_\+semaphores}, \hyperpage{15}
+    \subitem {create\+\_\+shared\+\_\+mem}, \hyperpage{15}
+    \subitem {exit\+\_\+error}, \hyperpage{15}
+    \subitem {free\+\_\+resources}, \hyperpage{16}
+    \subitem {handle\+\_\+signal}, \hyperpage{16}
+    \subitem {init\+\_\+signal\+\_\+handling}, \hyperpage{16}
+    \subitem {main}, \hyperpage{17}
+    \subitem {pgrm\+\_\+name}, \hyperpage{17}
+    \subitem {sem\+\_\+free}, \hyperpage{17}
+    \subitem {sem\+\_\+used}, \hyperpage{18}
+    \subitem {sem\+\_\+wmutex}, \hyperpage{18}
+    \subitem {shm}, \hyperpage{18}
+    \subitem {should\+\_\+terminate}, \hyperpage{18}
+    \subitem {sigaction\+\_\+t}, \hyperpage{15}
+
+  \indexspace
+
+  \item {vertices}
+    \subitem {graph}, \hyperpage{5}
+
+  \indexspace
+
+  \item {write\+\_\+pos}
+    \subitem {shm}, \hyperpage{7}
+
+\end{theindex}

@@ -1,0 +1,248 @@
+\hypertarget{supervisor_8c}{}\section{/home/mkx/\+Dropbox/\+T\+U/3. Semester/\+Betriebssysteme/2. Übungen und Abgaben/\+Aufgabe\+\_\+4/src/supervisor.c File Reference}
+\label{supervisor_8c}\index{/home/mkx/\+Dropbox/\+T\+U/3. Semester/\+Betriebssysteme/2. Übungen und Abgaben/\+Aufgabe\+\_\+4/src/supervisor.\+c@{/home/mkx/\+Dropbox/\+T\+U/3. Semester/\+Betriebssysteme/2. Übungen und Abgaben/\+Aufgabe\+\_\+4/src/supervisor.\+c}}
+
+
+Generator program module.  
+
+
+{\ttfamily \#include $<$signal.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$limits.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}shared.\+h\char`\"{}}\newline
+Include dependency graph for supervisor.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{supervisor_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct sigaction \mbox{\hyperlink{supervisor_8c_abf5441931a69e1e1e5d2fcb538f2577b}{sigaction\+\_\+t}}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{supervisor_8c_a8a6509edc999547588fff88aaa1749aa}{handle\+\_\+signal}} (int signal)
+\begin{DoxyCompactList}\small\item\em This function is executed whenever the program receives a S\+I\+G\+T\+E\+RM or S\+I\+G\+I\+NT signal. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{supervisor_8c_a167dd69f395d8eabe030132e6a251a22}{exit\+\_\+error}} (const char $\ast$s)
+\begin{DoxyCompactList}\small\item\em This function prints the error message specified as argument, prints it to stderr with additionally information if errno is set. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{supervisor_8c_a48b56ce7049602b61eb20e5785d6f9b4}{create\+\_\+shared\+\_\+mem}} (\mbox{\hyperlink{shared_8h_ad148dc55e3c26aff56f6e6ed23419691}{shm\+\_\+t}} $\ast$$\ast$const pshm)
+\begin{DoxyCompactList}\small\item\em This function initializes shared memory used for communication between the supervisor and the generators. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{supervisor_8c_a84e496c39d975868a9457c7e399c404e}{create\+\_\+semaphores}} (sem\+\_\+t $\ast$$\ast$const \mbox{\hyperlink{supervisor_8c_a185e05ee7e8081d54de49642b4e5c30a}{sem\+\_\+free}}, sem\+\_\+t $\ast$$\ast$const \mbox{\hyperlink{supervisor_8c_a950ef33196b658f05e657a3b5cf43ce5}{sem\+\_\+used}}, sem\+\_\+t $\ast$$\ast$const \mbox{\hyperlink{supervisor_8c_a4e0719c44c62fadd8ab900f9c0018ad8}{sem\+\_\+wmutex}})
+\begin{DoxyCompactList}\small\item\em This function initializes semaphores used for synchronization between the supervisor and the generators. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{supervisor_8c_ad8af35dfc186be4497b154092bba4cfd}{init\+\_\+signal\+\_\+handling}} (\mbox{\hyperlink{supervisor_8c_abf5441931a69e1e1e5d2fcb538f2577b}{sigaction\+\_\+t}} $\ast$const sa)
+\begin{DoxyCompactList}\small\item\em This function registers the signal handling callback which is executed whenever the application receives a S\+I\+G\+T\+E\+RM or S\+I\+G\+I\+NT signal. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{supervisor_8c_ac97d9d5060caaef4bc31e55aa3d92c76}{free\+\_\+resources}} (void)
+\begin{DoxyCompactList}\small\item\em This function unregisters and deletes all allocated resources. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{supervisor_8c_a217dbf8b442f20279ea00b898af96f52}{main}} (int argc, const char $\ast$$\ast$argv)
+\begin{DoxyCompactList}\small\item\em This function sets up necessary resources, e.\+g signal handling, shared memory, semaphores and reads the result data out of the ring buffer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static volatile bool \mbox{\hyperlink{supervisor_8c_acdd177da9287cefe9b98640ebd85f183}{should\+\_\+terminate}} = false
+\item 
+static const char $\ast$ \mbox{\hyperlink{supervisor_8c_a12c9d9e16b993347cdb775c5dc977d65}{pgrm\+\_\+name}} = N\+U\+LL
+\item 
+static sem\+\_\+t $\ast$ \mbox{\hyperlink{supervisor_8c_a185e05ee7e8081d54de49642b4e5c30a}{sem\+\_\+free}} = N\+U\+LL
+\item 
+static sem\+\_\+t $\ast$ \mbox{\hyperlink{supervisor_8c_a950ef33196b658f05e657a3b5cf43ce5}{sem\+\_\+used}} = N\+U\+LL
+\item 
+static sem\+\_\+t $\ast$ \mbox{\hyperlink{supervisor_8c_a4e0719c44c62fadd8ab900f9c0018ad8}{sem\+\_\+wmutex}} = N\+U\+LL
+\item 
+static \mbox{\hyperlink{shared_8h_ad148dc55e3c26aff56f6e6ed23419691}{shm\+\_\+t}} $\ast$ \mbox{\hyperlink{supervisor_8c_a1020ec0887fec05be0d837cfcf51b663}{shm}} = N\+U\+LL
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Generator program module. 
+
+Supervisor program module.
+
+\begin{DoxyAuthor}{Author}
+Klaus Hahnenkamp \href{mailto:e11775823@student.tuwien.ac.at}{\tt e11775823@student.\+tuwien.\+ac.\+at} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+10.\+01.\+2019
+\end{DoxyDate}
+The generator program takes a graph as input. The program repeatedly generates a random solution to the problem as described on the first page and writes its result to the circular buffer. It repeats this procedure until it is notified by the supervisor to terminate.
+
+\begin{DoxyAuthor}{Author}
+Klaus Hahnenkamp \href{mailto:e11775823@student.tuwien.ac.at}{\tt e11775823@student.\+tuwien.\+ac.\+at} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+10.\+01.\+2019
+\end{DoxyDate}
+The supervisor sets up the shared memory and the semaphores and initializes the circular buffer required for the communication with the generators. It then waits for the generators to write solutions to the circular buffer. 
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{supervisor_8c_abf5441931a69e1e1e5d2fcb538f2577b}\label{supervisor_8c_abf5441931a69e1e1e5d2fcb538f2577b}} 
+\index{supervisor.\+c@{supervisor.\+c}!sigaction\+\_\+t@{sigaction\+\_\+t}}
+\index{sigaction\+\_\+t@{sigaction\+\_\+t}!supervisor.\+c@{supervisor.\+c}}
+\subsubsection{\texorpdfstring{sigaction\+\_\+t}{sigaction\_t}}
+{\footnotesize\ttfamily typedef struct sigaction \mbox{\hyperlink{supervisor_8c_abf5441931a69e1e1e5d2fcb538f2577b}{sigaction\+\_\+t}}}
+
+used for registering a signal callback function 
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{supervisor_8c_a84e496c39d975868a9457c7e399c404e}\label{supervisor_8c_a84e496c39d975868a9457c7e399c404e}} 
+\index{supervisor.\+c@{supervisor.\+c}!create\+\_\+semaphores@{create\+\_\+semaphores}}
+\index{create\+\_\+semaphores@{create\+\_\+semaphores}!supervisor.\+c@{supervisor.\+c}}
+\subsubsection{\texorpdfstring{create\+\_\+semaphores()}{create\_semaphores()}}
+{\footnotesize\ttfamily static void create\+\_\+semaphores (\begin{DoxyParamCaption}\item[{sem\+\_\+t $\ast$$\ast$const}]{sem\+\_\+free,  }\item[{sem\+\_\+t $\ast$$\ast$const}]{sem\+\_\+used,  }\item[{sem\+\_\+t $\ast$$\ast$const}]{sem\+\_\+wmutex }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This function initializes semaphores used for synchronization between the supervisor and the generators. 
+
+create semaphores 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em sem\+\_\+free} & a reference to the sem\+\_\+free pointer \\
+\hline
+\mbox{\tt out}  & {\em sem\+\_\+used} & a reference to a sem\+\_\+used pointer \\
+\hline
+\mbox{\tt out}  & {\em sem\+\_\+wmutex} & a reference to a sem\+\_\+wmutex pointer \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{supervisor_8c_a48b56ce7049602b61eb20e5785d6f9b4}\label{supervisor_8c_a48b56ce7049602b61eb20e5785d6f9b4}} 
+\index{supervisor.\+c@{supervisor.\+c}!create\+\_\+shared\+\_\+mem@{create\+\_\+shared\+\_\+mem}}
+\index{create\+\_\+shared\+\_\+mem@{create\+\_\+shared\+\_\+mem}!supervisor.\+c@{supervisor.\+c}}
+\subsubsection{\texorpdfstring{create\+\_\+shared\+\_\+mem()}{create\_shared\_mem()}}
+{\footnotesize\ttfamily static void create\+\_\+shared\+\_\+mem (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{shared_8h_ad148dc55e3c26aff56f6e6ed23419691}{shm\+\_\+t}} $\ast$$\ast$const}]{pshm }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This function initializes shared memory used for communication between the supervisor and the generators. 
+
+create the shared memory 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em pshm} & a reference to a shm\+\_\+t pointer \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{supervisor_8c_a167dd69f395d8eabe030132e6a251a22}\label{supervisor_8c_a167dd69f395d8eabe030132e6a251a22}} 
+\index{supervisor.\+c@{supervisor.\+c}!exit\+\_\+error@{exit\+\_\+error}}
+\index{exit\+\_\+error@{exit\+\_\+error}!supervisor.\+c@{supervisor.\+c}}
+\subsubsection{\texorpdfstring{exit\+\_\+error()}{exit\_error()}}
+{\footnotesize\ttfamily static void exit\+\_\+error (\begin{DoxyParamCaption}\item[{const char $\ast$}]{s }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This function prints the error message specified as argument, prints it to stderr with additionally information if errno is set. 
+
+Prints an error message and exits with code 1 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em s} & error message to be printed \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{supervisor_8c_ac97d9d5060caaef4bc31e55aa3d92c76}\label{supervisor_8c_ac97d9d5060caaef4bc31e55aa3d92c76}} 
+\index{supervisor.\+c@{supervisor.\+c}!free\+\_\+resources@{free\+\_\+resources}}
+\index{free\+\_\+resources@{free\+\_\+resources}!supervisor.\+c@{supervisor.\+c}}
+\subsubsection{\texorpdfstring{free\+\_\+resources()}{free\_resources()}}
+{\footnotesize\ttfamily static void free\+\_\+resources (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This function unregisters and deletes all allocated resources. 
+
+delete all resources used \mbox{\Hypertarget{supervisor_8c_a8a6509edc999547588fff88aaa1749aa}\label{supervisor_8c_a8a6509edc999547588fff88aaa1749aa}} 
+\index{supervisor.\+c@{supervisor.\+c}!handle\+\_\+signal@{handle\+\_\+signal}}
+\index{handle\+\_\+signal@{handle\+\_\+signal}!supervisor.\+c@{supervisor.\+c}}
+\subsubsection{\texorpdfstring{handle\+\_\+signal()}{handle\_signal()}}
+{\footnotesize\ttfamily static void handle\+\_\+signal (\begin{DoxyParamCaption}\item[{int}]{signal }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This function is executed whenever the program receives a S\+I\+G\+T\+E\+RM or S\+I\+G\+I\+NT signal. 
+
+Signal callback 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em signal} & the signal to be handled \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{supervisor_8c_ad8af35dfc186be4497b154092bba4cfd}\label{supervisor_8c_ad8af35dfc186be4497b154092bba4cfd}} 
+\index{supervisor.\+c@{supervisor.\+c}!init\+\_\+signal\+\_\+handling@{init\+\_\+signal\+\_\+handling}}
+\index{init\+\_\+signal\+\_\+handling@{init\+\_\+signal\+\_\+handling}!supervisor.\+c@{supervisor.\+c}}
+\subsubsection{\texorpdfstring{init\+\_\+signal\+\_\+handling()}{init\_signal\_handling()}}
+{\footnotesize\ttfamily static void init\+\_\+signal\+\_\+handling (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{supervisor_8c_abf5441931a69e1e1e5d2fcb538f2577b}{sigaction\+\_\+t}} $\ast$const}]{sa }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This function registers the signal handling callback which is executed whenever the application receives a S\+I\+G\+T\+E\+RM or S\+I\+G\+I\+NT signal. 
+
+initializes signal handling 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em sem\+\_\+free} & a reference to a sigaction\+\_\+t struct \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{supervisor_8c_a217dbf8b442f20279ea00b898af96f52}\label{supervisor_8c_a217dbf8b442f20279ea00b898af96f52}} 
+\index{supervisor.\+c@{supervisor.\+c}!main@{main}}
+\index{main@{main}!supervisor.\+c@{supervisor.\+c}}
+\subsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{const char $\ast$$\ast$}]{argv }\end{DoxyParamCaption})}
+
+
+
+This function sets up necessary resources, e.\+g signal handling, shared memory, semaphores and reads the result data out of the ring buffer. 
+
+Main entry point of the supervisor program 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em argc} & argument count \\
+\hline
+\mbox{\tt in}  & {\em argv} & argument vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns E\+X\+I\+T\+\_\+\+S\+U\+C\+C\+E\+SS
+\end{DoxyReturn}
+global variables\+: pgrm\+\_\+name
+
+global variables\+: should\+\_\+terminate
+
+global variables\+: sem\+\_\+free
+
+global variables\+: sem\+\_\+used
+
+global variables\+: sem\+\_\+wmutex
+
+global variables\+: shm 
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{supervisor_8c_a12c9d9e16b993347cdb775c5dc977d65}\label{supervisor_8c_a12c9d9e16b993347cdb775c5dc977d65}} 
+\index{supervisor.\+c@{supervisor.\+c}!pgrm\+\_\+name@{pgrm\+\_\+name}}
+\index{pgrm\+\_\+name@{pgrm\+\_\+name}!supervisor.\+c@{supervisor.\+c}}
+\subsubsection{\texorpdfstring{pgrm\+\_\+name}{pgrm\_name}}
+{\footnotesize\ttfamily const char$\ast$ pgrm\+\_\+name = N\+U\+LL\hspace{0.3cm}{\ttfamily [static]}}
+
+the program name, set in early stage of execution \mbox{\Hypertarget{supervisor_8c_a185e05ee7e8081d54de49642b4e5c30a}\label{supervisor_8c_a185e05ee7e8081d54de49642b4e5c30a}} 
+\index{supervisor.\+c@{supervisor.\+c}!sem\+\_\+free@{sem\+\_\+free}}
+\index{sem\+\_\+free@{sem\+\_\+free}!supervisor.\+c@{supervisor.\+c}}
+\subsubsection{\texorpdfstring{sem\+\_\+free}{sem\_free}}
+{\footnotesize\ttfamily sem\+\_\+t$\ast$ sem\+\_\+free = N\+U\+LL\hspace{0.3cm}{\ttfamily [static]}}
+
+pointer to the semaphore tracking the free space in the ring buffer \mbox{\Hypertarget{supervisor_8c_a950ef33196b658f05e657a3b5cf43ce5}\label{supervisor_8c_a950ef33196b658f05e657a3b5cf43ce5}} 
+\index{supervisor.\+c@{supervisor.\+c}!sem\+\_\+used@{sem\+\_\+used}}
+\index{sem\+\_\+used@{sem\+\_\+used}!supervisor.\+c@{supervisor.\+c}}
+\subsubsection{\texorpdfstring{sem\+\_\+used}{sem\_used}}
+{\footnotesize\ttfamily sem\+\_\+t$\ast$ sem\+\_\+used = N\+U\+LL\hspace{0.3cm}{\ttfamily [static]}}
+
+pointer to the semaphore tracking the used space in the ring buffer \mbox{\Hypertarget{supervisor_8c_a4e0719c44c62fadd8ab900f9c0018ad8}\label{supervisor_8c_a4e0719c44c62fadd8ab900f9c0018ad8}} 
+\index{supervisor.\+c@{supervisor.\+c}!sem\+\_\+wmutex@{sem\+\_\+wmutex}}
+\index{sem\+\_\+wmutex@{sem\+\_\+wmutex}!supervisor.\+c@{supervisor.\+c}}
+\subsubsection{\texorpdfstring{sem\+\_\+wmutex}{sem\_wmutex}}
+{\footnotesize\ttfamily sem\+\_\+t$\ast$ sem\+\_\+wmutex = N\+U\+LL\hspace{0.3cm}{\ttfamily [static]}}
+
+pointer to the semaphore used for mutex-\/access to the write end of the ring buffer \mbox{\Hypertarget{supervisor_8c_a1020ec0887fec05be0d837cfcf51b663}\label{supervisor_8c_a1020ec0887fec05be0d837cfcf51b663}} 
+\index{supervisor.\+c@{supervisor.\+c}!shm@{shm}}
+\index{shm@{shm}!supervisor.\+c@{supervisor.\+c}}
+\subsubsection{\texorpdfstring{shm}{shm}}
+{\footnotesize\ttfamily \mbox{\hyperlink{shared_8h_ad148dc55e3c26aff56f6e6ed23419691}{shm\+\_\+t}}$\ast$ \mbox{\hyperlink{structshm}{shm}} = N\+U\+LL\hspace{0.3cm}{\ttfamily [static]}}
+
+pointer to the shared memory \mbox{\Hypertarget{supervisor_8c_acdd177da9287cefe9b98640ebd85f183}\label{supervisor_8c_acdd177da9287cefe9b98640ebd85f183}} 
+\index{supervisor.\+c@{supervisor.\+c}!should\+\_\+terminate@{should\+\_\+terminate}}
+\index{should\+\_\+terminate@{should\+\_\+terminate}!supervisor.\+c@{supervisor.\+c}}
+\subsubsection{\texorpdfstring{should\+\_\+terminate}{should\_terminate}}
+{\footnotesize\ttfamily volatile bool should\+\_\+terminate = false\hspace{0.3cm}{\ttfamily [static]}}
+
+when set via signal callback, the supervisor advises generators to terminate and terminates itself 
