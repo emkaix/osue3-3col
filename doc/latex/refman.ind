@@ -1,71 +1,107 @@
 \begin{theindex}
 
-  \item {/home/mkx/\+Dropbox/\+T\+U/3. Semester/\+Betriebssysteme/2. \IeC {\"U}bungen und Abgaben/\+Aufgabe\+\_\+4/src/shared.\+h}, 
+  \item {/home/mkx/\+Dropbox/\+T\+U/3. Semester/\+Betriebssysteme/2. \IeC {\"U}bungen und Abgaben/\+Aufgabe\+\_\+4/src/generator.\+c}, 
 		\hyperpage{9}
+  \item {/home/mkx/\+Dropbox/\+T\+U/3. Semester/\+Betriebssysteme/2. \IeC {\"U}bungen und Abgaben/\+Aufgabe\+\_\+4/src/shared.\+h}, 
+		\hyperpage{15}
   \item {/home/mkx/\+Dropbox/\+T\+U/3. Semester/\+Betriebssysteme/2. \IeC {\"U}bungen und Abgaben/\+Aufgabe\+\_\+4/src/supervisor.\+c}, 
-		\hyperpage{13}
+		\hyperpage{19}
 
   \indexspace
 
   \item {adj\+\_\+mat}
     \subitem {graph}, \hyperpage{5}
+  \item {adj\+\_\+mat\+\_\+buffer}
+    \subitem {generator.\+c}, \hyperpage{14}
 
   \indexspace
 
   \item {C\+I\+R\+C\+U\+L\+A\+R\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}
-    \subitem {shared.\+h}, \hyperpage{11}
+    \subitem {shared.\+h}, \hyperpage{17}
   \item {create\+\_\+semaphores}
-    \subitem {supervisor.\+c}, \hyperpage{15}
+    \subitem {supervisor.\+c}, \hyperpage{20}
   \item {create\+\_\+shared\+\_\+mem}
-    \subitem {supervisor.\+c}, \hyperpage{15}
+    \subitem {supervisor.\+c}, \hyperpage{21}
 
   \indexspace
 
   \item {D\+E\+C\+O\+D\+E\+\_\+U}
-    \subitem {shared.\+h}, \hyperpage{11}
+    \subitem {shared.\+h}, \hyperpage{17}
   \item {D\+E\+C\+O\+D\+E\+\_\+V}
-    \subitem {shared.\+h}, \hyperpage{11}
+    \subitem {shared.\+h}, \hyperpage{17}
   \item {data}
     \subitem {shm}, \hyperpage{7}
 
   \indexspace
 
   \item {E\+N\+C\+O\+DE}
-    \subitem {shared.\+h}, \hyperpage{11}
+    \subitem {shared.\+h}, \hyperpage{17}
   \item {edges}
     \subitem {rset}, \hyperpage{6}
   \item {exit\+\_\+error}
-    \subitem {supervisor.\+c}, \hyperpage{15}
+    \subitem {generator.\+c}, \hyperpage{11}
+    \subitem {supervisor.\+c}, \hyperpage{21}
 
   \indexspace
 
   \item {free\+\_\+resources}
-    \subitem {supervisor.\+c}, \hyperpage{16}
+    \subitem {generator.\+c}, \hyperpage{11}
+    \subitem {supervisor.\+c}, \hyperpage{21}
 
   \indexspace
 
+  \item {g}
+    \subitem {generator.\+c}, \hyperpage{14}
+  \item {generator.\+c}
+    \subitem {adj\+\_\+mat\+\_\+buffer}, \hyperpage{14}
+    \subitem {exit\+\_\+error}, \hyperpage{11}
+    \subitem {free\+\_\+resources}, \hyperpage{11}
+    \subitem {g}, \hyperpage{14}
+    \subitem {graph\+\_\+t}, \hyperpage{11}
+    \subitem {init\+\_\+2\+D\+\_\+mat}, \hyperpage{11}
+    \subitem {init\+\_\+graph}, \hyperpage{12}
+    \subitem {main}, \hyperpage{12}
+    \subitem {map\+\_\+shared\+\_\+mem}, \hyperpage{13}
+    \subitem {open\+\_\+semaphores}, \hyperpage{13}
+    \subitem {pgrm\+\_\+name}, \hyperpage{14}
+    \subitem {print\+\_\+adj\+\_\+mat}, \hyperpage{13}
+    \subitem {rs}, \hyperpage{14}
+    \subitem {sem\+\_\+free}, \hyperpage{14}
+    \subitem {sem\+\_\+used}, \hyperpage{15}
+    \subitem {sem\+\_\+wmutex}, \hyperpage{15}
+    \subitem {set\+\_\+random\+\_\+seed}, \hyperpage{14}
+    \subitem {shm}, \hyperpage{15}
   \item {graph}, \hyperpage{5}
     \subitem {adj\+\_\+mat}, \hyperpage{5}
     \subitem {num\+\_\+edges}, \hyperpage{5}
     \subitem {num\+\_\+vertices}, \hyperpage{5}
     \subitem {vertices}, \hyperpage{5}
+  \item {graph\+\_\+t}
+    \subitem {generator.\+c}, \hyperpage{11}
 
   \indexspace
 
   \item {handle\+\_\+signal}
-    \subitem {supervisor.\+c}, \hyperpage{16}
+    \subitem {supervisor.\+c}, \hyperpage{21}
 
   \indexspace
 
+  \item {init\+\_\+2\+D\+\_\+mat}
+    \subitem {generator.\+c}, \hyperpage{11}
+  \item {init\+\_\+graph}
+    \subitem {generator.\+c}, \hyperpage{12}
   \item {init\+\_\+signal\+\_\+handling}
-    \subitem {supervisor.\+c}, \hyperpage{16}
+    \subitem {supervisor.\+c}, \hyperpage{22}
 
   \indexspace
 
   \item {M\+A\+X\+\_\+\+R\+E\+S\+U\+L\+T\+\_\+\+E\+D\+G\+ES}
-    \subitem {shared.\+h}, \hyperpage{11}
+    \subitem {shared.\+h}, \hyperpage{17}
   \item {main}
-    \subitem {supervisor.\+c}, \hyperpage{17}
+    \subitem {generator.\+c}, \hyperpage{12}
+    \subitem {supervisor.\+c}, \hyperpage{22}
+  \item {map\+\_\+shared\+\_\+mem}
+    \subitem {generator.\+c}, \hyperpage{13}
 
   \indexspace
 
@@ -77,85 +113,101 @@
 
   \indexspace
 
-  \item {P\+E\+R\+M\+\_\+\+O\+W\+N\+E\+R\+\_\+\+RW}
-    \subitem {shared.\+h}, \hyperpage{12}
-  \item {P\+E\+R\+M\+\_\+\+O\+W\+N\+E\+R\+\_\+R}
-    \subitem {shared.\+h}, \hyperpage{12}
-  \item {pgrm\+\_\+name}
-    \subitem {supervisor.\+c}, \hyperpage{17}
+  \item {open\+\_\+semaphores}
+    \subitem {generator.\+c}, \hyperpage{13}
 
   \indexspace
 
+  \item {P\+E\+R\+M\+\_\+\+O\+W\+N\+E\+R\+\_\+\+RW}
+    \subitem {shared.\+h}, \hyperpage{17}
+  \item {P\+E\+R\+M\+\_\+\+O\+W\+N\+E\+R\+\_\+R}
+    \subitem {shared.\+h}, \hyperpage{17}
+  \item {pgrm\+\_\+name}
+    \subitem {generator.\+c}, \hyperpage{14}
+    \subitem {supervisor.\+c}, \hyperpage{23}
+  \item {print\+\_\+adj\+\_\+mat}
+    \subitem {generator.\+c}, \hyperpage{13}
+
+  \indexspace
+
+  \item {rs}
+    \subitem {generator.\+c}, \hyperpage{14}
   \item {rset}, \hyperpage{6}
     \subitem {edges}, \hyperpage{6}
     \subitem {num\+\_\+edges}, \hyperpage{6}
   \item {rset\+\_\+t}
-    \subitem {shared.\+h}, \hyperpage{12}
+    \subitem {shared.\+h}, \hyperpage{18}
 
   \indexspace
 
   \item {S\+E\+M\+\_\+\+F\+R\+E\+E\+\_\+\+N\+A\+ME}
-    \subitem {shared.\+h}, \hyperpage{12}
+    \subitem {shared.\+h}, \hyperpage{18}
   \item {S\+E\+M\+\_\+\+U\+S\+E\+D\+\_\+\+N\+A\+ME}
-    \subitem {shared.\+h}, \hyperpage{12}
+    \subitem {shared.\+h}, \hyperpage{18}
   \item {S\+E\+M\+\_\+\+W\+M\+U\+T\+E\+X\+\_\+\+N\+A\+ME}
-    \subitem {shared.\+h}, \hyperpage{12}
+    \subitem {shared.\+h}, \hyperpage{18}
   \item {S\+H\+M\+\_\+\+N\+A\+ME}
-    \subitem {shared.\+h}, \hyperpage{12}
+    \subitem {shared.\+h}, \hyperpage{18}
   \item {sem\+\_\+free}
-    \subitem {supervisor.\+c}, \hyperpage{17}
+    \subitem {generator.\+c}, \hyperpage{14}
+    \subitem {supervisor.\+c}, \hyperpage{23}
   \item {sem\+\_\+used}
-    \subitem {supervisor.\+c}, \hyperpage{18}
+    \subitem {generator.\+c}, \hyperpage{15}
+    \subitem {supervisor.\+c}, \hyperpage{23}
   \item {sem\+\_\+wmutex}
-    \subitem {supervisor.\+c}, \hyperpage{18}
+    \subitem {generator.\+c}, \hyperpage{15}
+    \subitem {supervisor.\+c}, \hyperpage{23}
+  \item {set\+\_\+random\+\_\+seed}
+    \subitem {generator.\+c}, \hyperpage{14}
   \item {shared.\+h}
     \subitem {C\+I\+R\+C\+U\+L\+A\+R\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}, 
-		\hyperpage{11}
-    \subitem {D\+E\+C\+O\+D\+E\+\_\+U}, \hyperpage{11}
-    \subitem {D\+E\+C\+O\+D\+E\+\_\+V}, \hyperpage{11}
-    \subitem {E\+N\+C\+O\+DE}, \hyperpage{11}
+		\hyperpage{17}
+    \subitem {D\+E\+C\+O\+D\+E\+\_\+U}, \hyperpage{17}
+    \subitem {D\+E\+C\+O\+D\+E\+\_\+V}, \hyperpage{17}
+    \subitem {E\+N\+C\+O\+DE}, \hyperpage{17}
     \subitem {M\+A\+X\+\_\+\+R\+E\+S\+U\+L\+T\+\_\+\+E\+D\+G\+ES}, 
-		\hyperpage{11}
+		\hyperpage{17}
     \subitem {P\+E\+R\+M\+\_\+\+O\+W\+N\+E\+R\+\_\+\+RW}, 
-		\hyperpage{12}
-    \subitem {P\+E\+R\+M\+\_\+\+O\+W\+N\+E\+R\+\_\+R}, \hyperpage{12}
-    \subitem {rset\+\_\+t}, \hyperpage{12}
+		\hyperpage{17}
+    \subitem {P\+E\+R\+M\+\_\+\+O\+W\+N\+E\+R\+\_\+R}, \hyperpage{17}
+    \subitem {rset\+\_\+t}, \hyperpage{18}
     \subitem {S\+E\+M\+\_\+\+F\+R\+E\+E\+\_\+\+N\+A\+ME}, 
-		\hyperpage{12}
+		\hyperpage{18}
     \subitem {S\+E\+M\+\_\+\+U\+S\+E\+D\+\_\+\+N\+A\+ME}, 
-		\hyperpage{12}
+		\hyperpage{18}
     \subitem {S\+E\+M\+\_\+\+W\+M\+U\+T\+E\+X\+\_\+\+N\+A\+ME}, 
-		\hyperpage{12}
-    \subitem {S\+H\+M\+\_\+\+N\+A\+ME}, \hyperpage{12}
-    \subitem {shm\+\_\+t}, \hyperpage{13}
+		\hyperpage{18}
+    \subitem {S\+H\+M\+\_\+\+N\+A\+ME}, \hyperpage{18}
+    \subitem {shm\+\_\+t}, \hyperpage{18}
   \item {shm}, \hyperpage{7}
     \subitem {data}, \hyperpage{7}
+    \subitem {generator.\+c}, \hyperpage{15}
     \subitem {state}, \hyperpage{7}
-    \subitem {supervisor.\+c}, \hyperpage{18}
+    \subitem {supervisor.\+c}, \hyperpage{23}
     \subitem {write\+\_\+pos}, \hyperpage{7}
   \item {shm\+\_\+t}
-    \subitem {shared.\+h}, \hyperpage{13}
+    \subitem {shared.\+h}, \hyperpage{18}
   \item {should\+\_\+terminate}
-    \subitem {supervisor.\+c}, \hyperpage{18}
+    \subitem {supervisor.\+c}, \hyperpage{23}
   \item {sigaction\+\_\+t}
-    \subitem {supervisor.\+c}, \hyperpage{15}
+    \subitem {supervisor.\+c}, \hyperpage{20}
   \item {state}
     \subitem {shm}, \hyperpage{7}
   \item {supervisor.\+c}
-    \subitem {create\+\_\+semaphores}, \hyperpage{15}
-    \subitem {create\+\_\+shared\+\_\+mem}, \hyperpage{15}
-    \subitem {exit\+\_\+error}, \hyperpage{15}
-    \subitem {free\+\_\+resources}, \hyperpage{16}
-    \subitem {handle\+\_\+signal}, \hyperpage{16}
-    \subitem {init\+\_\+signal\+\_\+handling}, \hyperpage{16}
-    \subitem {main}, \hyperpage{17}
-    \subitem {pgrm\+\_\+name}, \hyperpage{17}
-    \subitem {sem\+\_\+free}, \hyperpage{17}
-    \subitem {sem\+\_\+used}, \hyperpage{18}
-    \subitem {sem\+\_\+wmutex}, \hyperpage{18}
-    \subitem {shm}, \hyperpage{18}
-    \subitem {should\+\_\+terminate}, \hyperpage{18}
-    \subitem {sigaction\+\_\+t}, \hyperpage{15}
+    \subitem {create\+\_\+semaphores}, \hyperpage{20}
+    \subitem {create\+\_\+shared\+\_\+mem}, \hyperpage{21}
+    \subitem {exit\+\_\+error}, \hyperpage{21}
+    \subitem {free\+\_\+resources}, \hyperpage{21}
+    \subitem {handle\+\_\+signal}, \hyperpage{21}
+    \subitem {init\+\_\+signal\+\_\+handling}, \hyperpage{22}
+    \subitem {main}, \hyperpage{22}
+    \subitem {pgrm\+\_\+name}, \hyperpage{23}
+    \subitem {sem\+\_\+free}, \hyperpage{23}
+    \subitem {sem\+\_\+used}, \hyperpage{23}
+    \subitem {sem\+\_\+wmutex}, \hyperpage{23}
+    \subitem {shm}, \hyperpage{23}
+    \subitem {should\+\_\+terminate}, \hyperpage{23}
+    \subitem {sigaction\+\_\+t}, \hyperpage{20}
 
   \indexspace
 

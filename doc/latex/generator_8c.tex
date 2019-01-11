@@ -1,0 +1,295 @@
+\hypertarget{generator_8c}{}\section{/home/mkx/\+Dropbox/\+T\+U/3. Semester/\+Betriebssysteme/2. Übungen und Abgaben/\+Aufgabe\+\_\+4/src/generator.c File Reference}
+\label{generator_8c}\index{/home/mkx/\+Dropbox/\+T\+U/3. Semester/\+Betriebssysteme/2. Übungen und Abgaben/\+Aufgabe\+\_\+4/src/generator.\+c@{/home/mkx/\+Dropbox/\+T\+U/3. Semester/\+Betriebssysteme/2. Übungen und Abgaben/\+Aufgabe\+\_\+4/src/generator.\+c}}
+
+
+Generator program module.  
+
+
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$time.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}shared.\+h\char`\"{}}\newline
+Include dependency graph for generator.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{generator_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structgraph}{graph}}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{structgraph}{graph}} \mbox{\hyperlink{generator_8c_a425a009f32516fb6fc36e9bf5f01e850}{graph\+\_\+t}}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{generator_8c_a0a56982d0ae16a78874026d04241ef80}{init\+\_\+graph}} (\mbox{\hyperlink{generator_8c_a425a009f32516fb6fc36e9bf5f01e850}{graph\+\_\+t}} $\ast$const \mbox{\hyperlink{generator_8c_a6942b31e9b9d6672c2cf252d26c22300}{g}}, const char $\ast$$\ast$pedges)
+\begin{DoxyCompactList}\small\item\em This function parses the edge data passed as program arguments and stores the data such as number of vertices, number of edges, highest index in the graph\+\_\+t pointer. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{generator_8c_ac9ece11494e004651de18e1aefab43b2}{init\+\_\+2\+D\+\_\+mat}} (char $\ast$$\ast$$\ast$const pmat, int numrows)
+\begin{DoxyCompactList}\small\item\em This function initializes a 2D of given size. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{generator_8c_ad9b8ccc78b2486ef77cd0fdc6119a846}{print\+\_\+adj\+\_\+mat}} (\mbox{\hyperlink{generator_8c_a425a009f32516fb6fc36e9bf5f01e850}{graph\+\_\+t}} $\ast$const \mbox{\hyperlink{generator_8c_a6942b31e9b9d6672c2cf252d26c22300}{g}})
+\begin{DoxyCompactList}\small\item\em This function prints the contents of the adjacency matrix to stdout. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{generator_8c_a8e1d0ec163fcaf6d6cb9eead242a3599}{set\+\_\+random\+\_\+seed}} (void)
+\begin{DoxyCompactList}\small\item\em This function sets a seed based on current nanosecond time for rand function. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{generator_8c_a167dd69f395d8eabe030132e6a251a22}{exit\+\_\+error}} (const char $\ast$s)
+\begin{DoxyCompactList}\small\item\em This function prints the error message specified as argument, prints it to stderr with additionally information if errno is set. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{generator_8c_ac2a3743559512502f43c798cb686ab0d}{map\+\_\+shared\+\_\+mem}} (\mbox{\hyperlink{shared_8h_ad148dc55e3c26aff56f6e6ed23419691}{shm\+\_\+t}} $\ast$$\ast$const pshm)
+\begin{DoxyCompactList}\small\item\em This function maps a shared memory into the processes virtual adress space. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{generator_8c_afb8e9bb28a4657ed3f77adade40e5189}{open\+\_\+semaphores}} (sem\+\_\+t $\ast$$\ast$const \mbox{\hyperlink{supervisor_8c_a185e05ee7e8081d54de49642b4e5c30a}{sem\+\_\+free}}, sem\+\_\+t $\ast$$\ast$const \mbox{\hyperlink{supervisor_8c_a950ef33196b658f05e657a3b5cf43ce5}{sem\+\_\+used}}, sem\+\_\+t $\ast$$\ast$const \mbox{\hyperlink{supervisor_8c_a4e0719c44c62fadd8ab900f9c0018ad8}{sem\+\_\+wmutex}})
+\begin{DoxyCompactList}\small\item\em This function opens the semaphores used for synchronization set up by supervisor. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{generator_8c_ac97d9d5060caaef4bc31e55aa3d92c76}{free\+\_\+resources}} (void)
+\begin{DoxyCompactList}\small\item\em This function unregisters and deletes all allocated resources. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{generator_8c_a217dbf8b442f20279ea00b898af96f52}{main}} (int argc, const char $\ast$$\ast$argv)
+\begin{DoxyCompactList}\small\item\em This function sets up the input graph, performs the monte-\/carlo-\/algorithm for findinf a 3-\/colorable solution for the input graph and writes the result sets in the ring buffer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{generator_8c_a425a009f32516fb6fc36e9bf5f01e850}{graph\+\_\+t}} \mbox{\hyperlink{generator_8c_a6942b31e9b9d6672c2cf252d26c22300}{g}}
+\item 
+static \mbox{\hyperlink{shared_8h_a05859a7c43dc7c24dc03ff6e9433ae4a}{rset\+\_\+t}} \mbox{\hyperlink{generator_8c_a6e753acb78ccef640f7e8de164d796f6}{rs}}
+\item 
+static \mbox{\hyperlink{shared_8h_ad148dc55e3c26aff56f6e6ed23419691}{shm\+\_\+t}} $\ast$ \mbox{\hyperlink{generator_8c_a1020ec0887fec05be0d837cfcf51b663}{shm}} = N\+U\+LL
+\item 
+static sem\+\_\+t $\ast$ \mbox{\hyperlink{generator_8c_a185e05ee7e8081d54de49642b4e5c30a}{sem\+\_\+free}} = N\+U\+LL
+\item 
+static sem\+\_\+t $\ast$ \mbox{\hyperlink{generator_8c_a950ef33196b658f05e657a3b5cf43ce5}{sem\+\_\+used}} = N\+U\+LL
+\item 
+static sem\+\_\+t $\ast$ \mbox{\hyperlink{generator_8c_a4e0719c44c62fadd8ab900f9c0018ad8}{sem\+\_\+wmutex}} = N\+U\+LL
+\item 
+static char $\ast$$\ast$ \mbox{\hyperlink{generator_8c_ac3a851a8256df5d83d20d75d69be49bb}{adj\+\_\+mat\+\_\+buffer}} = N\+U\+LL
+\item 
+static const char $\ast$ \mbox{\hyperlink{generator_8c_a12c9d9e16b993347cdb775c5dc977d65}{pgrm\+\_\+name}} = N\+U\+LL
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Generator program module. 
+
+\begin{DoxyAuthor}{Author}
+Klaus Hahnenkamp \href{mailto:e11775823@student.tuwien.ac.at}{\tt e11775823@student.\+tuwien.\+ac.\+at} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+10.\+01.\+2019
+\end{DoxyDate}
+The generator program takes a graph as input. The program repeatedly generates a random solution to the problem as described on the first page and writes its result to the circular buffer. It repeats this procedure until it is notified by the supervisor to terminate. 
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{generator_8c_a425a009f32516fb6fc36e9bf5f01e850}\label{generator_8c_a425a009f32516fb6fc36e9bf5f01e850}} 
+\index{generator.\+c@{generator.\+c}!graph\+\_\+t@{graph\+\_\+t}}
+\index{graph\+\_\+t@{graph\+\_\+t}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{graph\+\_\+t}{graph\_t}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structgraph}{graph}}  \mbox{\hyperlink{generator_8c_a425a009f32516fb6fc36e9bf5f01e850}{graph\+\_\+t}}}
+
+representing the input graph 
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{generator_8c_a167dd69f395d8eabe030132e6a251a22}\label{generator_8c_a167dd69f395d8eabe030132e6a251a22}} 
+\index{generator.\+c@{generator.\+c}!exit\+\_\+error@{exit\+\_\+error}}
+\index{exit\+\_\+error@{exit\+\_\+error}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{exit\+\_\+error()}{exit\_error()}}
+{\footnotesize\ttfamily static void exit\+\_\+error (\begin{DoxyParamCaption}\item[{const char $\ast$}]{s }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This function prints the error message specified as argument, prints it to stderr with additionally information if errno is set. 
+
+Prints an error message and exits with code 1 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em s} & error message to be printed \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{generator_8c_ac97d9d5060caaef4bc31e55aa3d92c76}\label{generator_8c_ac97d9d5060caaef4bc31e55aa3d92c76}} 
+\index{generator.\+c@{generator.\+c}!free\+\_\+resources@{free\+\_\+resources}}
+\index{free\+\_\+resources@{free\+\_\+resources}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{free\+\_\+resources()}{free\_resources()}}
+{\footnotesize\ttfamily static void free\+\_\+resources (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This function unregisters and deletes all allocated resources. 
+
+delete all resources used \mbox{\Hypertarget{generator_8c_ac9ece11494e004651de18e1aefab43b2}\label{generator_8c_ac9ece11494e004651de18e1aefab43b2}} 
+\index{generator.\+c@{generator.\+c}!init\+\_\+2\+D\+\_\+mat@{init\+\_\+2\+D\+\_\+mat}}
+\index{init\+\_\+2\+D\+\_\+mat@{init\+\_\+2\+D\+\_\+mat}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{init\+\_\+2\+D\+\_\+mat()}{init\_2D\_mat()}}
+{\footnotesize\ttfamily static void init\+\_\+2\+D\+\_\+mat (\begin{DoxyParamCaption}\item[{char $\ast$$\ast$$\ast$const}]{pmat,  }\item[{int}]{numrows }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This function initializes a 2D of given size. 
+
+initialize a 2D matrix 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em pmat} & reference to a char pointer to store the data \\
+\hline
+\mbox{\tt in}  & {\em numrows} & reference to a char pointer to store the data \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{generator_8c_a0a56982d0ae16a78874026d04241ef80}\label{generator_8c_a0a56982d0ae16a78874026d04241ef80}} 
+\index{generator.\+c@{generator.\+c}!init\+\_\+graph@{init\+\_\+graph}}
+\index{init\+\_\+graph@{init\+\_\+graph}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{init\+\_\+graph()}{init\_graph()}}
+{\footnotesize\ttfamily static void init\+\_\+graph (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{generator_8c_a425a009f32516fb6fc36e9bf5f01e850}{graph\+\_\+t}} $\ast$const}]{g,  }\item[{const char $\ast$$\ast$}]{pedges }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This function parses the edge data passed as program arguments and stores the data such as number of vertices, number of edges, highest index in the graph\+\_\+t pointer. 
+
+initialize graph 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em g} & pointer to a graph to store the data \\
+\hline
+\mbox{\tt in}  & {\em pedges} & pointer to the edges passed as program arguments \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{generator_8c_a217dbf8b442f20279ea00b898af96f52}\label{generator_8c_a217dbf8b442f20279ea00b898af96f52}} 
+\index{generator.\+c@{generator.\+c}!main@{main}}
+\index{main@{main}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{const char $\ast$$\ast$}]{argv }\end{DoxyParamCaption})}
+
+
+
+This function sets up the input graph, performs the monte-\/carlo-\/algorithm for findinf a 3-\/colorable solution for the input graph and writes the result sets in the ring buffer. 
+
+Main entry point of the generator program 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em argc} & argument count \\
+\hline
+\mbox{\tt in}  & {\em argv} & argument vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns E\+X\+I\+T\+\_\+\+S\+U\+C\+C\+E\+SS
+\end{DoxyReturn}
+global variables\+: g
+
+global variables\+: rs
+
+global variables\+: shm
+
+global variables\+: sem\+\_\+free
+
+global variables\+: sem\+\_\+used
+
+global variables\+: sem\+\_\+wmutex
+
+global variables\+: adj\+\_\+mat\+\_\+buffer
+
+global variables\+: pgrm\+\_\+name \mbox{\Hypertarget{generator_8c_ac2a3743559512502f43c798cb686ab0d}\label{generator_8c_ac2a3743559512502f43c798cb686ab0d}} 
+\index{generator.\+c@{generator.\+c}!map\+\_\+shared\+\_\+mem@{map\+\_\+shared\+\_\+mem}}
+\index{map\+\_\+shared\+\_\+mem@{map\+\_\+shared\+\_\+mem}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{map\+\_\+shared\+\_\+mem()}{map\_shared\_mem()}}
+{\footnotesize\ttfamily static void map\+\_\+shared\+\_\+mem (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{shared_8h_ad148dc55e3c26aff56f6e6ed23419691}{shm\+\_\+t}} $\ast$$\ast$const}]{pshm }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This function maps a shared memory into the processes virtual adress space. 
+
+map shared memory 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em pshm} & a reference to a pshm pointer \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{generator_8c_afb8e9bb28a4657ed3f77adade40e5189}\label{generator_8c_afb8e9bb28a4657ed3f77adade40e5189}} 
+\index{generator.\+c@{generator.\+c}!open\+\_\+semaphores@{open\+\_\+semaphores}}
+\index{open\+\_\+semaphores@{open\+\_\+semaphores}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{open\+\_\+semaphores()}{open\_semaphores()}}
+{\footnotesize\ttfamily static void open\+\_\+semaphores (\begin{DoxyParamCaption}\item[{sem\+\_\+t $\ast$$\ast$const}]{sem\+\_\+free,  }\item[{sem\+\_\+t $\ast$$\ast$const}]{sem\+\_\+used,  }\item[{sem\+\_\+t $\ast$$\ast$const}]{sem\+\_\+wmutex }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This function opens the semaphores used for synchronization set up by supervisor. 
+
+open semaphores 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em sem\+\_\+free} & a reference to the sem\+\_\+free pointer \\
+\hline
+\mbox{\tt out}  & {\em sem\+\_\+used} & a reference to a sem\+\_\+used pointer \\
+\hline
+\mbox{\tt out}  & {\em sem\+\_\+wmutex} & a reference to a sem\+\_\+wmutex pointer \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{generator_8c_ad9b8ccc78b2486ef77cd0fdc6119a846}\label{generator_8c_ad9b8ccc78b2486ef77cd0fdc6119a846}} 
+\index{generator.\+c@{generator.\+c}!print\+\_\+adj\+\_\+mat@{print\+\_\+adj\+\_\+mat}}
+\index{print\+\_\+adj\+\_\+mat@{print\+\_\+adj\+\_\+mat}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{print\+\_\+adj\+\_\+mat()}{print\_adj\_mat()}}
+{\footnotesize\ttfamily static void print\+\_\+adj\+\_\+mat (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{generator_8c_a425a009f32516fb6fc36e9bf5f01e850}{graph\+\_\+t}} $\ast$const}]{g }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This function prints the contents of the adjacency matrix to stdout. 
+
+print adjacency matrix 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em g} & pointer to a graph to store the data \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{generator_8c_a8e1d0ec163fcaf6d6cb9eead242a3599}\label{generator_8c_a8e1d0ec163fcaf6d6cb9eead242a3599}} 
+\index{generator.\+c@{generator.\+c}!set\+\_\+random\+\_\+seed@{set\+\_\+random\+\_\+seed}}
+\index{set\+\_\+random\+\_\+seed@{set\+\_\+random\+\_\+seed}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{set\+\_\+random\+\_\+seed()}{set\_random\_seed()}}
+{\footnotesize\ttfamily static void set\+\_\+random\+\_\+seed (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This function sets a seed based on current nanosecond time for rand function. 
+
+sets random seed 
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{generator_8c_ac3a851a8256df5d83d20d75d69be49bb}\label{generator_8c_ac3a851a8256df5d83d20d75d69be49bb}} 
+\index{generator.\+c@{generator.\+c}!adj\+\_\+mat\+\_\+buffer@{adj\+\_\+mat\+\_\+buffer}}
+\index{adj\+\_\+mat\+\_\+buffer@{adj\+\_\+mat\+\_\+buffer}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{adj\+\_\+mat\+\_\+buffer}{adj\_mat\_buffer}}
+{\footnotesize\ttfamily char$\ast$$\ast$ adj\+\_\+mat\+\_\+buffer = N\+U\+LL\hspace{0.3cm}{\ttfamily [static]}}
+
+stores a per-\/iteration copy of the adjacency matrix \mbox{\Hypertarget{generator_8c_a6942b31e9b9d6672c2cf252d26c22300}\label{generator_8c_a6942b31e9b9d6672c2cf252d26c22300}} 
+\index{generator.\+c@{generator.\+c}!g@{g}}
+\index{g@{g}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{g}{g}}
+{\footnotesize\ttfamily \mbox{\hyperlink{generator_8c_a425a009f32516fb6fc36e9bf5f01e850}{graph\+\_\+t}} g\hspace{0.3cm}{\ttfamily [static]}}
+
+stores the data of the input graph \mbox{\Hypertarget{generator_8c_a12c9d9e16b993347cdb775c5dc977d65}\label{generator_8c_a12c9d9e16b993347cdb775c5dc977d65}} 
+\index{generator.\+c@{generator.\+c}!pgrm\+\_\+name@{pgrm\+\_\+name}}
+\index{pgrm\+\_\+name@{pgrm\+\_\+name}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{pgrm\+\_\+name}{pgrm\_name}}
+{\footnotesize\ttfamily const char$\ast$ pgrm\+\_\+name = N\+U\+LL\hspace{0.3cm}{\ttfamily [static]}}
+
+the program name, set in early stage of execution \mbox{\Hypertarget{generator_8c_a6e753acb78ccef640f7e8de164d796f6}\label{generator_8c_a6e753acb78ccef640f7e8de164d796f6}} 
+\index{generator.\+c@{generator.\+c}!rs@{rs}}
+\index{rs@{rs}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{rs}{rs}}
+{\footnotesize\ttfamily \mbox{\hyperlink{shared_8h_a05859a7c43dc7c24dc03ff6e9433ae4a}{rset\+\_\+t}} rs\hspace{0.3cm}{\ttfamily [static]}}
+
+stores the data of the result set \mbox{\Hypertarget{generator_8c_a185e05ee7e8081d54de49642b4e5c30a}\label{generator_8c_a185e05ee7e8081d54de49642b4e5c30a}} 
+\index{generator.\+c@{generator.\+c}!sem\+\_\+free@{sem\+\_\+free}}
+\index{sem\+\_\+free@{sem\+\_\+free}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{sem\+\_\+free}{sem\_free}}
+{\footnotesize\ttfamily sem\+\_\+t$\ast$ sem\+\_\+free = N\+U\+LL\hspace{0.3cm}{\ttfamily [static]}}
+
+pointer to the semaphore tracking the free space in the ring buffer \mbox{\Hypertarget{generator_8c_a950ef33196b658f05e657a3b5cf43ce5}\label{generator_8c_a950ef33196b658f05e657a3b5cf43ce5}} 
+\index{generator.\+c@{generator.\+c}!sem\+\_\+used@{sem\+\_\+used}}
+\index{sem\+\_\+used@{sem\+\_\+used}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{sem\+\_\+used}{sem\_used}}
+{\footnotesize\ttfamily sem\+\_\+t$\ast$ sem\+\_\+used = N\+U\+LL\hspace{0.3cm}{\ttfamily [static]}}
+
+pointer to the semaphore tracking the used space in the ring buffer \mbox{\Hypertarget{generator_8c_a4e0719c44c62fadd8ab900f9c0018ad8}\label{generator_8c_a4e0719c44c62fadd8ab900f9c0018ad8}} 
+\index{generator.\+c@{generator.\+c}!sem\+\_\+wmutex@{sem\+\_\+wmutex}}
+\index{sem\+\_\+wmutex@{sem\+\_\+wmutex}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{sem\+\_\+wmutex}{sem\_wmutex}}
+{\footnotesize\ttfamily sem\+\_\+t$\ast$ sem\+\_\+wmutex = N\+U\+LL\hspace{0.3cm}{\ttfamily [static]}}
+
+pointer to the semaphore used for mutex-\/access to the write end of the ring buffer \mbox{\Hypertarget{generator_8c_a1020ec0887fec05be0d837cfcf51b663}\label{generator_8c_a1020ec0887fec05be0d837cfcf51b663}} 
+\index{generator.\+c@{generator.\+c}!shm@{shm}}
+\index{shm@{shm}!generator.\+c@{generator.\+c}}
+\subsubsection{\texorpdfstring{shm}{shm}}
+{\footnotesize\ttfamily \mbox{\hyperlink{shared_8h_ad148dc55e3c26aff56f6e6ed23419691}{shm\+\_\+t}}$\ast$ \mbox{\hyperlink{structshm}{shm}} = N\+U\+LL\hspace{0.3cm}{\ttfamily [static]}}
+
+pointer to the shared memory 
