@@ -60,26 +60,29 @@ static void free_resources(void);
  */
 int main(int argc, const char **argv)
 {
-    //init
     pgrm_name = argv[0];
 
+    //register exit callback
     if (atexit(free_resources) != 0)
     {
         fprintf(stderr, "[%s]: atexit register failed, Error: %s\n", pgrm_name, strerror(errno));
         exit(EXIT_FAILURE);
     }
 
+    //generator must be started with at least one edge
     if (argc == 1)
     {
         fprintf(stderr, "[%s]: correct usage: generator EDGE1...\n", pgrm_name);
         exit_error("invalid number of arguments");
     }
 
+    //seed is current nanosecond time, so multiple generators started in quick succession have different seeds
     set_random_seed();
 
     memset(&g, 0, sizeof(g));
     memset(&rs, 0, sizeof(rs));
 
+    //initialize all relevant structures, semaphores, shared memory
     init_graph(&g, argv + 1);
     print_adj_mat(&g);
     map_shared_mem(&shm);
@@ -182,7 +185,6 @@ static void init_graph(graph_t *const g, const char **pedges)
 
     memset(g->vertices, 0, num_vertices);
 
-    //init 2D adjacency matrix
     init_2D_mat(&g->adj_mat, num_vertices);
 
     //fill adjacency matrix

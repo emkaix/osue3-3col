@@ -50,6 +50,7 @@ int main(int argc, const char **argv)
 {
     pgrm_name = argv[0];
 
+    //register exit callback
     if (atexit(free_resources) != 0)
     {
         fprintf(stderr, "[%s]: atexit register failed, Error: %s\n", pgrm_name, strerror(errno));
@@ -74,12 +75,12 @@ int main(int argc, const char **argv)
 
     //init semaphore
     create_semaphores(&sem_free, &sem_used, &sem_wmutex);
-
-    //main loop
+    
     int read_pos = 0;
     rset_t best_rset;
     best_rset.num_edges = INT_MAX;
 
+    //main loop
     while (!should_terminate)
     {
         if (sem_wait(sem_used) < 0)
