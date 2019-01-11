@@ -17,20 +17,20 @@
 
 typedef struct graph
 {
-    int num_edges;                  /*!< number of edges */
-    int num_vertices;               /*!< number of vertices */
-    char **adj_mat;                 /*!< adjacency matrix */
-    int *vertices;                  /*!< pointer to the vertices */
-} graph_t;                          /*!< representing the input graph */
+    int num_edges;                      /*!< number of edges */
+    int num_vertices;                   /*!< number of vertices */
+    char **adj_mat;                     /*!< adjacency matrix */
+    int *vertices;                      /*!< pointer to the vertices */
+} graph_t;                              /*!< representing the input graph */
 
-static graph_t g;                    /*!< stores the data of the input graph */
-static rset_t rs;                    /*!< stores the data of the result set */
-static shm_t *shm = NULL;            /*!< pointer to the shared memory */
-static sem_t *sem_free = NULL;       /*!< pointer to the semaphore tracking the free space in the ring buffer */
-static sem_t *sem_used = NULL;       /*!< pointer to the semaphore tracking the used space in the ring buffer */
-static sem_t *sem_wmutex = NULL;     /*!< pointer to the semaphore used for mutex-access to the write end of the ring buffer */
-static char **adj_mat_buffer = NULL; /*!< stores a per-iteration copy of the adjacency matrix */
-static const char *pgrm_name = NULL; /*!< the program name, set in early stage of execution */
+static graph_t g = {0};                 /*!< stores the data of the input graph */
+static rset_t rs = {0};                 /*!< stores the data of the result set */
+static shm_t *shm = NULL;               /*!< pointer to the shared memory */
+static sem_t *sem_free = NULL;          /*!< pointer to the semaphore tracking the free space in the ring buffer */
+static sem_t *sem_used = NULL;          /*!< pointer to the semaphore tracking the used space in the ring buffer */
+static sem_t *sem_wmutex = NULL;        /*!< pointer to the semaphore used for mutex-access to the write end of the ring buffer */
+static char **adj_mat_buffer = NULL;    /*!< stores a per-iteration copy of the adjacency matrix */
+static const char *pgrm_name = NULL;    /*!< the program name, set in early stage of execution */
 
 static void init_graph(graph_t *const, const char **);
 static void init_2D_mat(char ***const, int);
@@ -83,9 +83,9 @@ int main(int argc, const char **argv)
     memset(&rs, 0, sizeof(rs));
 
     //initialize all relevant structures, semaphores, shared memory
+    map_shared_mem(&shm);
     init_graph(&g, argv + 1);
     print_adj_mat(&g);
-    map_shared_mem(&shm);
     open_semaphores(&sem_free, &sem_used, &sem_wmutex);
     init_2D_mat(&adj_mat_buffer, g.num_vertices);
 
@@ -272,7 +272,6 @@ static void exit_error(const char *s)
     else
         fprintf(stderr, "[%s]: %s, Error: %s\n", pgrm_name, s, strerror(errno));
 
-    free_resources();
     exit(EXIT_FAILURE);
 }
 
@@ -322,21 +321,29 @@ static void open_semaphores(sem_t **const sem_free, sem_t **const sem_used, sem_
  */
 static void free_resources(void)
 {
-    if (munmap(shm, sizeof(shm_t)) < 0)
+    if (shm != NULL && munmap(shm, sizeof(shm_t)) < 0)
         fprintf(stderr, "[%s]: munmmap failed, Error: %s\n", pgrm_name, strerror(errno));
 
-    if (sem_close(sem_free) < 0)
+    if (sem_free != NULL && sem_close(sem_free) < 0)
         fprintf(stderr, "[%s]: sem_close failed, Error: %s\n", pgrm_name, strerror(errno));
 
-    if (sem_close(sem_used) < 0)
+    if (sem_used != NULL && sem_close(sem_used) < 0)
         fprintf(stderr, "[%s]: sem_close failed, Error: %s\n", pgrm_name, strerror(errno));
 
-    if (sem_close(sem_wmutex) < 0)
+    if (sem_wmutex != NULL && sem_close(sem_wmutex) < 0)
         fprintf(stderr, "[%s]: sem_close failed, Error: %s\n", pgrm_name, strerror(errno));
 
-    free(g.vertices);
-    free(g.adj_mat[0]);
-    free(g.adj_mat);
-    free(adj_mat_buffer[0]);
-    free(adj_mat_buffer);
+    if (g.vertices != NULL) {
+        free(g.vertices);
+    }
+
+    if (g.adj_mat != NULL) {
+        free(g.adj_mat[0]);
+        free(g.adj_mat);
+    }
+
+    if (adj_mat_buffer != NULL) {
+        free(adj_mat_buffer[0]);
+        free(adj_mat_buffer);
+    }
 }

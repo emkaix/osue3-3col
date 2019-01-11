@@ -48,7 +48,7 @@ static void free_resources(void);
  */
 int main(int argc, const char **argv)
 {
-    pgrm_name = argv[0];
+    pgrm_name = argv[0];    
 
     //register exit callback
     if (atexit(free_resources) != 0)
@@ -139,7 +139,6 @@ static void exit_error(const char *s)
     else
         fprintf(stderr, "[%s]: %s, Error: %s\n", pgrm_name, s, strerror(errno));
 
-    free_resources();
     exit(EXIT_FAILURE);
 }
 
@@ -216,27 +215,35 @@ static void init_signal_handling(sigaction_t *const sa)
  */
 static void free_resources(void)
 {
-    if (munmap(shm, sizeof(shm_t)) < 0)
-        fprintf(stderr, "[%s]: munmmap failed, Error: %s\n", pgrm_name, strerror(errno));
+    if (shm != NULL) {
+        if (munmap(shm, sizeof(shm_t)) < 0)
+            fprintf(stderr, "[%s]: munmmap failed, Error: %s\n", pgrm_name, strerror(errno));
 
-    if (shm_unlink(SHM_NAME) < 0)
-        fprintf(stderr, "[%s]: shm_unlink failed, Error: %s\n", pgrm_name, strerror(errno));
+        if (shm_unlink(SHM_NAME) < 0)
+            fprintf(stderr, "[%s]: shm_unlink failed, Error: %s\n", pgrm_name, strerror(errno));
+    }
 
-    if (sem_close(sem_free) < 0)
-        fprintf(stderr, "[%s]: sem_close failed, Error: %s\n", pgrm_name, strerror(errno));
+    if (sem_free != NULL) {
+        if (sem_close(sem_free) < 0)
+            fprintf(stderr, "[%s]: sem_close failed, Error: %s\n", pgrm_name, strerror(errno));
 
-    if (sem_close(sem_used) < 0)
-        fprintf(stderr, "[%s]: sem_close failed, Error: %s\n", pgrm_name, strerror(errno));
+        if (sem_unlink(SEM_FREE_NAME) < 0)
+            fprintf(stderr, "[%s]: sem_unlink failed, Error: %s\n", pgrm_name, strerror(errno));
+    }
 
-    if (sem_close(sem_wmutex) < 0)
-        fprintf(stderr, "[%s]: sem_close failed, Error: %s\n", pgrm_name, strerror(errno));
+    if (sem_used != NULL) {
+        if (sem_close(sem_used) < 0)
+            fprintf(stderr, "[%s]: sem_close failed, Error: %s\n", pgrm_name, strerror(errno));
 
-    if (sem_unlink(SEM_FREE_NAME) < 0)
-        fprintf(stderr, "[%s]: sem_unlink failed, Error: %s\n", pgrm_name, strerror(errno));
+        if (sem_unlink(SEM_USED_NAME) < 0)
+            fprintf(stderr, "[%s]: sem_unlink failed, Error: %s\n", pgrm_name, strerror(errno));
+    }
 
-    if (sem_unlink(SEM_USED_NAME) < 0)
-        fprintf(stderr, "[%s]: sem_unlink failed, Error: %s\n", pgrm_name, strerror(errno));
+    if (sem_wmutex != NULL) {
+        if (sem_close(sem_wmutex) < 0)
+            fprintf(stderr, "[%s]: sem_close failed, Error: %s\n", pgrm_name, strerror(errno));
 
-    if (sem_unlink(SEM_WMUTEX_NAME) < 0 && errno != ENOENT) //no such file or directory (already unlinked)
-        fprintf(stderr, "[%s]: sem_unlink failed, Error: %s\n", pgrm_name, strerror(errno));
+        if (sem_unlink(SEM_WMUTEX_NAME) < 0 && errno != ENOENT) //no such file or directory (already unlinked)
+            fprintf(stderr, "[%s]: sem_unlink failed, Error: %s\n", pgrm_name, strerror(errno));
+    }
 }
